@@ -1,0 +1,14 @@
+.form {
+    /* display: block; */
+    margin: 10% auto;
+    width: 500px;
+    background-color: aqua;
+    text-align: center;
+}
+input {
+    display: block;
+    text-align: center;
+}
+.heading {
+    margin: 50px;
+}

@@ -1,0 +1,72 @@
+<html class="fullscreen-bg" lang="en"><head>
+	{% load static%}
+	<title>Login Here!</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<!-- VENDOR CSS -->
+	<link href="{% static 'backend_site/css/bootstrap.min.css' %}" rel="stylesheet">
+	<link href="{% static 'backend_site/vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+	<link href="{% static 'backend_site/vendor/linearicons/style.css" rel="stylesheet' %}">
+	<!-- MAIN CSS -->
+	<link href="{% static 'backend_site/css/main.css' %}" rel="stylesheet">
+	<!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+	<link href="{% static 'backend_site/css/demo.css' %}" rel="stylesheet">
+	<!-- GOOGLE FONTS -->
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+	<!-- ICONS -->
+	<link href="{% static 'backend_site/img/apple-icon.png' %}" rel="apple-touch-icon" sizes="76x76">
+	<link href="{% static 'backend_site/img/favicon.png' %}" rel="icon" type="image/png" sizes="96x96">
+</head>
+
+<body>
+	<!-- WRAPPER -->
+	<div id="wrapper">
+		<div class="vertical-align-wrap">
+			<div class="vertical-align-middle">
+				<div class="auth-box ">
+					<div class="left">
+						<div class="content">
+							<div class="header">
+								<div class="logo text-center"><img alt="Klorofil Logo" src="/media/backend_site/img/logo-dark.png"></div>
+								<p class="lead">Login to your account</p>
+							</div>
+							<form class="form-auth-small" method="post" action="/controller/login/">  {% csrf_token %}	
+								<div class="form-group">
+									<label class="control-label sr-only" for="signin-email">Email</label>
+									<input class="form-control" id="signin-email" type="email" placeholder="Email" name="email">
+								</div>
+								<div class="form-group">
+									<label class="control-label sr-only" for="signin-password">Password</label>
+									<input class="form-control" id="signin-password" type="password" placeholder="Password" name="password">
+								</div>
+								<!-- <div class="form-group clearfix">
+									<label class="fancy-checkbox element-left">
+										<input type="checkbox">
+										<span>Remember me</span>
+									</label>
+								</div> -->
+								<button class="btn btn-primary btn-lg btn-block" type="submit">LOGIN</button>
+								<div class="bottom">
+									<span class="helper-text"><i class="fa fa-lock"></i> <a href="#">Forgot password?</a></span>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="right">
+						<div class="overlay"></div>
+						<div class="content text">
+							<h1 class="heading">Free Bootstrap dashboard template</h1>
+							<p>by The Develovers</p>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END WRAPPER -->
+
+
+
+</body></html>

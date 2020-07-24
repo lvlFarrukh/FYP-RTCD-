@@ -1,0 +1,118 @@
+
+{% extends 'backend_site/base.html' %}
+
+{% block title %} RTCD {% endblock %}
+
+{% block user_image %}{{ data.image }}{% endblock %}
+{% block username %}{{ data.name }}{% endblock %}
+
+
+{% block body %}
+
+   <div class="content-wrapper">
+      <section class="content-header">
+         <div class="container-fluid">
+
+            <!-- `````````````````````````````````````````````````````````````````````````` -->
+                                       <!-- Quantity Dialog box -->
+             <!-- `````````````````````````````````````````````````````````````````````````` -->
+
+            <div class="row">
+               <div class="col-12 col-sm-6 col-md-3">
+                 <div class="info-box">
+                   <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-user-secret"></i></span>
+     
+                   <div class="info-box-content">
+                     <span class="info-box-text">Total Suspect Report</span>
+                     <span class="info-box-number">
+                       {{front_count.0}}
+                     </span>
+                   </div>
+                   <!-- /.info-box-content -->
+                 </div>
+                 <!-- /.info-box -->
+               </div>
+               <!-- /.col -->
+               <div class="col-12 col-sm-6 col-md-3">
+                 <div class="info-box mb-3">
+                   <span class="info-box-icon bg-success elevation-1"><i class="fas fa-search"></i></span>
+     
+                   <div class="info-box-content">
+                     <span class="info-box-text">Suspect Found</span>
+                     <span class="info-box-number">coming soon</span>
+                   </div>
+                   <!-- /.info-box-content -->
+                 </div>
+                 <!-- /.info-box -->
+               </div>
+               <!-- /.col -->
+     
+               <!-- fix for small devices only -->
+               <div class="clearfix hidden-md-up"></div>
+
+               <div class="col-12 col-sm-6 col-md-3">
+                 <div class="info-box mb-3">
+                   <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-user"></i></span>
+     
+                   <div class="info-box-content">
+                     <span class="info-box-text">Total Users</span>
+                     <span class="info-box-number">coming soon</span>
+                   </div>
+                   <!-- /.info-box-content -->
+                 </div>
+                 <!-- /.info-box -->
+               </div>
+               <!-- /.col -->
+               <div class="col-12 col-sm-6 col-md-3">
+                 <div class="info-box mb-3">
+                   <span class="info-box-icon bg-info elevation-1"><i class="fas fa-users"></i></span>
+     
+                   <div class="info-box-content">
+                     <span class="info-box-text">New Members</span>
+                     <span class="info-box-number">coming soon</span>
+                   </div>
+                   <!-- /.info-box-content -->
+                 </div>
+                 <!-- /.info-box -->
+               </div>
+               <!-- /.col -->
+             </div>
+
+             <!-- `````````````````````````````````````````````````````````````````````````` -->
+                                          <!-- Message Areas -->
+             <!-- `````````````````````````````````````````````````````````````````````````` -->
+             <br>
+            <div class="container">
+               <div class="row">
+                  <div class="col-12">
+                     <h4>Recent Messages</h4>
+                       <div class="post">
+                         <div class="user-block">
+                           <!-- <img class="img-circle img-bordered-sm" src="" alt="user image"> -->
+                           <span class="username">
+                             <a href="#">Jonathan Burke Jr.</a>
+                           </span>
+                           <span class="description">Shared publicly - 7:45 PM today</span>
+                         </div>
+                         <!-- /.user-block -->
+                         <p>
+                           Lorem ipsum represents a long-held tradition for designers,
+                           typographers and the like. Some people hate it and argue for
+                           its demise, but others ignore.
+                         </p>
+   
+                         <p>
+                           <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
+                         </p>
+                       </div>
+  
+                   </div>
+
+               </div>
+            </div>
+
+             
+      </section>
+   </div>
+
+{% endblock %}
