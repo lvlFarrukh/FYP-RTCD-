@@ -4,6 +4,13 @@ from django.contrib import messages
 from django.contrib.sessions.models import Session
 from django.shortcuts import HttpResponse
 from django.core.files.storage import FileSystemStorage
+# from .forms import ImageForm
+# import os
+# import pickle
+# import shutil
+# import cv2
+
+# BASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),'suspect_image')
 
 
 def index(request):
@@ -74,9 +81,11 @@ def add_suspect_data(request):
         fs = FileSystemStorage()
 
         for i in request.FILES:
-            request.FILES[i].name = f"{insert_data.id}_user.{(request.FILES[i].name).split('.')[1]}"
+            request.FILES[i].name = f"{insert_data.id}_suspect.{(request.FILES[i].name).split('.')[-1]}"
+            # img_path = os.path.join(BASE_PATH,f"{insert_data.id}_suspect")
+            # cv2.imwrite(img_path, request.FILES[i])
             fs.save(request.FILES[i].name, request.FILES[i])
-            # print(request.FILES[i].size)
+
         return redirect('add_suspect')
 
     else:
