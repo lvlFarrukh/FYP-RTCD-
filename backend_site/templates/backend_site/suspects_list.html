@@ -22,12 +22,12 @@
                 <div class="container-fluid">
                   <div class="row mb-2">
                     <div class="col-sm-6">
-                      <h1>DataTables</h1>
+                      <h1>Suspect List</h1>
                     </div>
                     <div class="col-sm-6">
                       <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">DataTables</li>
+                        <li class="breadcrumb-item active">Suspect List</li>
                       </ol>
                     </div>
                   </div>
@@ -47,7 +47,7 @@
 
                         <div class="card">
                             <div class="card-header">
-                              <h3 class="card-title">DataTable with default features</h3>
+                              <h3 class="card-title">Some information about suspects</h3>
                             </div>
                             <!-- /.card-header -->
                                 <div class="row p-3">
@@ -60,9 +60,9 @@
                                           <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Education</th>
                                           <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">Age</th>
                                           <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Date of Birth</th>
-                                          <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">nationality</th>
                                           <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Image</th>
                                           <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Status</th>
+                                          <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Actions</th>
                                         </tr>
                                       </thead>
                                       <tbody> 
@@ -74,17 +74,27 @@
                                             <td>{{ val.education }}</td>
                                             <td>{{ val.age }}</td>
                                             <td>{{ val.date_of_birth }}</td>
-                                            <td>{{ val.nationalilty }}</td>
-                                            <td><a href="{{ val.image }}">Click here</a></td>
+                                            <td class="align-center"><button class="btn btn-outline-secondary img-btn" onclick="showImg({{val.image}})">Click here</button></td>
                                             <td>
-                                              {% if val.status == False %}
+                                              {% if val.status == 0 %}
                                                 <span class="badge badge-pill badge-danger">Wanted</span>
-                                              {% elif val.status == True %}
+                                              {% elif val.status == 1 %}
                                                 <span class="badge badge-pill badge-success">Found</span>
+                                              {% elif val.status == 2 %}
+                                                <span class="badge badge-pill badge-secondary">Resolve</span>
                                               {% endif %} 
                                               
                                             </td>
+                                            <td>
+                                              <button onClick="viewProfile({{val.id}}, {{val.image}})" class="btn btn-outline-success img-btn">View</button>
+                                              <button onClick="editProfile({{val.id}})" class="btn btn-outline-info img-btn">Edit</button>
+                                              <a href="/controller/deleting/{{val.id}}">
+                                                <button class="btn btn-outline-danger img-btn"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                              </a>
+                                            </td>
                                           </tr>
+
+                                          <span id="suspect-{{val.id}}" style="display: none">{{val.first_name}}--{{val.last_name}}--{{val.gender}}--{{val.cnic}}--{{val.address}}--{{val.education}}--{{val.marital_status}}--{{val.age}}--{{val.date_of_birth}}--{{val.nationalilty}}--{{val.entry_date}}--{{val.status}}--{{val.description}}</span>
                                         {% endfor %}
                                       
                                       </tbody>
@@ -100,6 +110,162 @@
                 </div>
              </section>
 
+              <!-- Model For showing images   -->
+              <div class="modal fade bd-example-modal-lg" id="showSlider" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content" id="image-md">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none;">
+                      <span aria-hidden="true" style="position: relative; left: 48%;">&times;</span>
+                    </button>
+                    <span class="previous round" style="position: relative; right: 7%; top: 38%" onclick="previous()">&#8249;</span>
+                    <span class="next round" style="position: relative; left: 100%; top: 20%" onclick="next()">&#8250;</span>
+                    <div class="img-div-sus">
+                      <img src="" id="suspect_img" alt="">
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modal for showing profile -->
+
+              <div class="modal fade" id="showProfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" id="viewProfileContant">
+                      <img src="" alt="alter" height="200px" style="border-radius: 5px;">
+                      <h5 style="margin: 10px"></h5>
+                      <h5 style="margin: 10px"></h5>
+                      <h5 style="margin: 10px"></h5>
+                      <h5 style="margin: 10px"></h5>
+                      <h5 style="margin: 10px"></h5>
+                      <h5 style="margin: 10px"></h5>
+                      <h5 style="margin: 10px"></h5>
+                      <h5 style="margin: 10px"></h5>
+                      <h5 style="margin: 10px"></h5>
+                      <h5 style="margin: 10px"></h5>
+                      <h5 style="margin: 10px"></h5>
+                      <h4 style="margin: 10px"></h4>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modal for Editing profile -->
+              <div class="modal fade" id="editProfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Edit Suspect Profile</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form action="/controller/updating/" method="post" enctype="multipart/form-data" onsubmit="checkVal()"> {% csrf_token %}
+                        
+                        <!-- for id -->
+                        <input type="number" id="suspect_id" style="display: none;" name="suspect_id">
+                        
+                        <div class="form-row">
+                          <div class="form-group col-md-6">
+                            <label for="first_name">First Name</label>
+                            <input type="text" class="form-control" id="name" name="first_name">
+                          </div>
+                          
+                          <div class="form-group col-md-6">
+                            <label for="last_name">Last name</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name">
+                          </div>
+                        </div>
+
+                        <div class="form-row">
+                          <div class="form-group col-md-6">
+                            <label for="gender">Gender</label>
+                              <select id="gender" class="form-control" name="gender">
+                                <option value="unknow" selected>Choose...</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                              </select>
+                          </div>
+                          
+                          <div class="form-group col-md-6">
+                            <label for="cnic">CNIC</label>
+                            <input type="number" class="form-control" id="cnic" name="cnic" maxlength="13" placeholder="3224712344532">
+                          </div>
+                      </div>
+
+
+                        <div class="form-group">
+                          <label for="address">Address</label>
+                          <input type="text" class="form-control" id="address" placeholder="1234 Main St" name="address">
+                        </div>
+
+                        <div class="form-row">
+                          <div class="form-group col-md-6">
+                            <label for="education">Education</label>
+                            <input type="text" class="form-control" id="education" name="education">
+                          </div>
+
+                          <div class="form-group col-md-4">
+                            <label for="marital_status">Marital status</label>
+                            <select id="marital_status" class="form-control" name="marital_status">
+                              <option value="unknown" selected>Choose...</option>
+                              <option value="single">Single</option>
+                              <option value="married">Married</option>
+                              <option value="seperate">Separate</option>
+                            </select>
+                          </div>
+
+                          <div class="form-group col-md-2">
+                            <label for="age">Age</label>
+                            <input type="number" class="form-control" id="age" name="age">
+                          </div>
+                        </div>
+
+                        <div class="form-row">
+                            <!-- <div class="form-group col-md-6">
+                              <label for="date_of_birth">Date of birth</label>
+                              <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
+                            </div> -->
+                            
+                            <div class="form-group col-md-6">
+                              <label for="nationality">Nationality</label>
+                              <input type="text" class="form-control" id="nationality" name="nationality">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="address">Description</label>
+                          <textarea rows="3" type="text" class="form-control" id="description" placeholder="Detail about suspect" name="description"></textarea>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                          <label for="status">Status</label><br/>
+                          Wanted <input id="wc" type="radio" style="margin-right: 10px;" value=0 name="status">
+                          Found <input id="fc" type="radio" style="margin-right: 10px;" value=1 name="status">
+                          Case Resolve <input id="rc" type="radio" value=2 name="status">
+                        </div>
+
+                        <div class="form-group col-md-12">
+                          <button type="submit" class="btn btn-info">
+                            Edit data
+                          </button>
+                        </div>
+                        
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
 
 
@@ -133,5 +299,109 @@
       "responsive": true,
     });
   });
+
+  let showImg = attr => {
+    window.i = [attr, attr.length, 0]
+    let modal = document.getElementById("suspect_img");
+    
+    modal.setAttribute("src",`/media/suspect_images/${attr[i[2]]}`);
+    $('#showSlider').modal('show');
+    
+  }
+
+  let next = ()=>{
+    window.i[2] = window.i[1] != window.i[2] ? window.i[2] + 1 : 0
+    console.log(window.i[2])
+
+    let modal = document.getElementById("suspect_img");
+    modal.setAttribute("src","")
+    modal.setAttribute("src",`/media/suspect_images/${window.i[0][window.i[2]]}`);
+    // console.log(window.i[0][window.i[2]])
+  }
+
+  const viewProfile = (id, imgs) => {
+    const spn = document.getElementById(`suspect-${id}`).innerHTML.split("--")
+    const modal = document.getElementById("viewProfileContant")
+    
+    modal.childNodes[1].setAttribute('src', `/media/suspect_images/${imgs[0]}`);
+    modal.childNodes[3].innerHTML = `Name: <strong> ${spn[0]} ${spn[1]} </strong>`
+    modal.childNodes[5].innerHTML = `Gender: <strong> ${spn[2]} </strong>`
+    modal.childNodes[7].innerHTML = `Cnic: <strong> ${spn[3]} </strong>`
+    modal.childNodes[9].innerHTML = `Address: <strong> ${spn[4]} </strong>`
+    modal.childNodes[11].innerHTML = `Education: <strong> ${spn[5]} </strong>`
+    modal.childNodes[13].innerHTML = `Marital Status: <strong> ${spn[6]} </strong>`
+    modal.childNodes[15].innerHTML = `Age: <strong> ${spn[7]} </strong>`
+    modal.childNodes[17].innerHTML = `Date of Birth: <strong> ${spn[8]} </strong>`
+    modal.childNodes[19].innerHTML = `Nationalilty: <strong> ${spn[9]} </strong>`
+    modal.childNodes[21].innerHTML = `Date of Reporting: <strong> ${spn[10]} </strong>`
+    modal.childNodes[23].innerHTML = `Description: <strong> ${spn[12]} </strong>`
+    modal.childNodes[23].innerHTML = spn[11] ? `Status: <strong> Wanted </strong>` : `Status: <strong> Found </strong>`
+
+    $('#showProfile').modal('show');
+  }
+
+  const checkVal = () => {
+
+    const fName = document.getElementById('name');
+    const lName = document.getElementById('last_name');
+    const cnic = document.getElementById('cnic');
+    const address = document.getElementById('address');
+    const education = document.getElementById('education');
+    const age = document.getElementById('age');
+    const nationality = document.getElementById('nationality');
+    const description = document.getElementById('description');
+    const dob = document.getElementById('date_of_birth');
+
+    fName.value == "" ? fName.setAttribute('value', 'unknown') : fName.value
+    lName.value == "" ? lName.setAttribute('value', 'unknown') : lName.value
+    cnic.value == "" ? cnic.setAttribute('value', '00') : cnic.value
+    address.value == "" ? address.setAttribute('value', 'unknown') : address.value
+    education.value == "" ? education.setAttribute('value', 'unknown') : education.value
+    age.value == "" ? age.setAttribute('value', '00') : age.value
+    nationality.value == "" ? nationality.setAttribute('value', 'unknown') : nationality.value
+    description.value == "" ? description.setAttribute('value', 'unknown') : description.value
+    dob.value == "" ? dob.setAttribute('value', '1000-10-10') : dob.value
+
+  }
+
+  const editProfile = id => {
+    const spn = document.getElementById(`suspect-${id}`).innerHTML.split("--")
+
+    const wc = document.getElementById('wc')
+    const fc = document.getElementById('fc')
+    const rc = document.getElementById('rc')
+   
+    document.getElementById('name').value = spn[0]
+    document.getElementById('last_name').value = spn[1]
+    document.getElementById('cnic').value = spn[3]
+    document.getElementById('address').value = spn[4]
+    document.getElementById('education').value = spn[5]
+    document.getElementById('age').value = spn[7]
+    document.getElementById('nationality').value = spn[9]
+    document.getElementById('description').innerHTML = spn[12]
+    document.getElementById('gender').value = spn[2]
+    document.getElementById('marital_status').value = spn[6]
+    document.getElementById('suspect_id').value = id
+
+    if (spn[11] == 0)
+      wc.checked = true
+    else if (spn[11] == 1)
+      fc.checked = true
+    else if (spn[11] == 2)
+      rc.checked = true
+
+    $('#editProfile').modal('show');
+  }
+
+  const delProfile = sId => {
+    if (confirm("Are you sure")){
+      $.ajax(
+        {
+            type:"GET",
+            url: `/controller/${sId}`
+      
+      })
+    }
+  }
 </script>
 {%endblock%}

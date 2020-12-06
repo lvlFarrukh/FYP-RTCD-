@@ -40,7 +40,7 @@
                   <hr>
                   <div class="card-body">
                      
-                      <form action="/controller/adding/" method="post" enctype="multipart/form-data"> {% csrf_token %}
+                      <form action="/controller/adding/" method="post" enctype="multipart/form-data" onsubmit="checkVal()"> {% csrf_token %}
                         <div class="form-row">
                           <div class="form-group col-md-6">
                             <label for="first_name">First Name</label>
@@ -57,7 +57,7 @@
                           <div class="form-group col-md-6">
                             <label for="gender">Gender</label>
                               <select id="gender" class="form-control" name="gender">
-                                <option selected>Choose...</option>
+                                <option value="unknow" selected>Choose...</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                                 <option value="other">Other</option>
@@ -66,7 +66,7 @@
                           
                           <div class="form-group col-md-6">
                             <label for="cnic">CNIC</label>
-                            <input type="number" class="form-control" id="nationality" name="cnic" maxlength="13" placeholder="3224712344532">
+                            <input type="number" class="form-control" id="cnic" name="cnic" maxlength="13" placeholder="3224712344532">
                           </div>
                       </div>
 
@@ -85,7 +85,7 @@
                           <div class="form-group col-md-4">
                             <label for="marital_status">Marital status</label>
                             <select id="marital_status" class="form-control" name="marital_status">
-                              <option selected>Choose...</option>
+                              <option value="unknown" selected>Choose...</option>
                               <option value="single">Single</option>
                               <option value="married">Married</option>
                               <option value="seperate">Separate</option>
@@ -110,23 +110,25 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                          <label for="address">Description</label>
+                          <textarea rows="3" type="text" class="form-control" id="description" placeholder="Detail about suspect" name="description"></textarea>
+                        </div>
+
                         <div class="form-group w-25" onchange="getval()">
                             <label for="no_of_images">Image</label>
                             <select id="no_of_images" class="form-control">
                               <option selected value=0>Choose...</option>
+                              <option value="1">1</option>
                               <option value="2">2</option>
+                              <option value="3">3</option>
                               <option value="4">4</option>
-                              <option value="8">8</option>
-                              <option value="12">12</option>
                             </select>
                         </div>
-
                         <div class="form-row" id="image_field">
                             
                         </div>
-
-
-                        <button type="submit" class="btn btn-primary">Add Now</button>
+                        <button type="submit" id="btn-sub" class="btn btn-primary" disabled>Add Now</button>
                       </form>
                   </div>
                 </div>
@@ -141,21 +143,50 @@
 {% block js%}
     <script>
         function getval(){
-            var no_itr = document.getElementById("no_of_images").value;
+            var no_itr = document.getElementById("no_of_images");
             var fields = "";
-            var c = parseInt(no_itr)/2 + 1;
-            if (no_itr != 0){
-                for (let i = 1; i <= no_itr/2; i++) {
-                    fields = fields + "<div class='form-row'><div class='form-group col-md-6'><label for='image"+i+"'>Image No "+i+"</label><input type='file' class='form-control' id='image"+i+"' name='image"+i+"' required></div><div class='form-group col-md-6'><label for='image"+c+"'>Image No "+c+"</label><input type='file' class='form-control' id='image"+c+"' name='image"+c+"' required></div></div>";
-                    console.log("i="+i);
-                    console.log("c="+c);
-                    c = c + 1;
+            // var c = parseInt(no_itr);
+            if (parseInt(no_itr.value) != 0){
+                for (let i = 1; i <= no_itr.value; i++) {
+                    fields = fields + "<div class='form-row'><div class='form-group col-md-6'><label for='image"+i+"'>Image No "+i+"</label><input type='file' class='form-control' id='image"+i+"' name='image"+i+"' required></div></div>";
+                    // console.log("i="+i);
+                    // console.log("c="+c);
+                    // c = c + 1;
                 }
                 document.getElementById('image_field').innerHTML = fields;
+                // target button
+                
+                document.getElementById('btn-sub').disabled = false;
             }
             else {
                 document.getElementById('image_field').innerHTML = "";
+                // console.log('working')
+                document.getElementById('btn-sub').disabled = true;
             }
+        }
+
+        const checkVal = () => {
+
+          const fName = document.getElementById('name');
+          const lName = document.getElementById('last_name');
+          const cnic = document.getElementById('cnic');
+          const address = document.getElementById('address');
+          const education = document.getElementById('education');
+          const age = document.getElementById('age');
+          const nationality = document.getElementById('nationality');
+          const description = document.getElementById('description');
+          const dob = document.getElementById('date_of_birth');
+
+          fName.value == "" ? fName.setAttribute('value', 'unknown') : fName.value
+          lName.value == "" ? lName.setAttribute('value', 'unknown') : lName.value
+          cnic.value == "" ? cnic.setAttribute('value', '00') : cnic.value
+          address.value == "" ? address.setAttribute('value', 'unknown') : address.value
+          education.value == "" ? education.setAttribute('value', 'unknown') : education.value
+          age.value == "" ? age.setAttribute('value', '00') : age.value
+          nationality.value == "" ? nationality.setAttribute('value', 'unknown') : nationality.value
+          description.value == "" ? description.setAttribute('value', 'unknown') : description.value
+          dob.value == "" ? dob.setAttribute('value', '1000-10-10') : dob.value
+
         }
     </script>
 

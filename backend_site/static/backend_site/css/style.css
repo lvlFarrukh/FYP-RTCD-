@@ -1,0 +1,48 @@
+#image-md > span {
+    font-size: 60px;
+    /* width: 45px; */
+    text-decoration: none;
+    display: inline;
+    padding: 0px 18px;
+    border-color: black;
+    cursor: pointer;
+}
+
+#image-md {
+    height: 70vh;
+}
+
+.round {
+    border-radius: 50%;
+}
+
+.next, .previous {
+    /* background-color: #f1f1f1; */
+    color: white;
+}
+
+.img-div-sus {
+    /* height: 131vh; */
+    text-align: center;
+    position: relative;
+    bottom: 35%;
+}
+
+img#suspect_img {
+    height: 60vh;
+    margin: 20px;
+}
+
+.img-btn{
+    max-height: 28px !important;
+    padding: 0px 5px !important;
+}
+
+.align-center{
+    text-align: center;
+}
+
+.viewProfile {
+    max-width: 900px !important;
+    margin: 0.75rem auto !important;
+}

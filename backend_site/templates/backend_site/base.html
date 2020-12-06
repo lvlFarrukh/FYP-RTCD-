@@ -8,6 +8,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{% block title %}{% endblock %}</title>
+  
+  <link rel="stylesheet" href="{% static '/backend_site/css/style.css' %}">
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
@@ -20,6 +22,7 @@
   <link rel="stylesheet" href="{% static '/backend_site/dist/css/adminlte.min.css' %}">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
 
   {%block css%}{%endblock%}
 
@@ -154,15 +157,24 @@
           </li>
 
           <li class="nav-item">
-            <a href="widgets.html" class="nav-link">
+            <a href="/controller/suspect_list" class="nav-link">
               <i class="nav-icon fas fa-file-alt"></i>
               <p>
-                Report
+                Reports
               </p>
             </a>
           </li>
 
-          <li class="nav-item has-treeview">
+          <li class="nav-item">
+            <a href="/controller/add_suspect" class="nav-link">
+              <i class="fas fa-user-plus nav-icon"></i>
+              <p>
+                Add Suspect
+              </p>
+            </a>
+          </li>
+
+          {% comment %} <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-user-secret"></i>
               <p>
@@ -184,7 +196,7 @@
                 </a>
               </li>
             </ul>
-          </li>
+          </li> {% endcomment %}
           
          
         </ul>

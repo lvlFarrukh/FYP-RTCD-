@@ -10,5 +10,8 @@ urlpatterns = [
         path('user/', views.user, name='user'),
         path('suspect_list/', views.suspect_list, name='suspect_list'),
         path('identify_suspects/', views.identify_suspects, name='identify_suspects'),
+        path('updating/', views.update_suspect, name='update_suspect'),
+        path('deleting/<int:suspectId>/', views.del_suspect, name='del_suspect'),
+        # path('faceRecognization/', views.face_check, name='face_check'),
 
 ]

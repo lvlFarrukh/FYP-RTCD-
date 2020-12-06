@@ -35,8 +35,9 @@ class suspect_person_detail(models.Model):
     date_of_birth = models.DateField(default="2050-01-01")
     nationalilty = models.CharField(max_length=100, default="unknown")
     entry_date = models.DateTimeField(default=datetime.datetime.now())
-    status = models.BooleanField(default=0)
+    status = models.IntegerField(default=0)
+    description = models.CharField(max_length=2000, default="unknown")
     image = models.ImageField(upload_to=upload_location)
-
+    
     def __str__(self):
         return f"id: {self.id}, Date: {self.entry_date}"
