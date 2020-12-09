@@ -234,15 +234,25 @@ def user(request):
         return redirect('login')
 
 
+"""
+This function is to display suspect that are "Wanted"
+"""
 def suspect_list(request):
     if request.session.has_key('login_id'):
         data = controller_user.objects.get(id=request.session['login_id'])
         suspect_data = suspect_person_detail.objects.all()
+    
+        wanted_suspects = []
+        for data in suspect_data:
+            if data.status == 0:
+                wanted_suspects.append(data)
+
+
         for i in suspect_data:
             # images = [img for img in os.listdir(destination) if img.split('_')[0] =
             i.image = [img for img in os.listdir(destination) if img.split('-')[0] == str(i.id)]
             
-        return render(request, 'backend_site/suspects_list.html', {'suspect_data': suspect_data,
+        return render(request, 'backend_site/suspects_list.html', {'suspect_data': wanted_suspects,
                                                                    'data': data, 'length':len(suspect_data)})
     else:
         return redirect('login')
