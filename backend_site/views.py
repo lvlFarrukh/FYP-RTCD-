@@ -235,11 +235,30 @@ def user(request):
 
 
 """
-This function is to display suspect that are "Wanted"
+This function is to display all reports
 """
 def suspect_list(request):
     if request.session.has_key('login_id'):
-        data = controller_user.objects.get(id=request.session['login_id'])
+        user_data = controller_user.objects.get(id=request.session['login_id'])
+        suspect_data = suspect_person_detail.objects.all()
+    
+        for i in suspect_data:
+            # images = [img for img in os.listdir(destination) if img.split('_')[0] =
+            i.image = [img for img in os.listdir(destination) if img.split('-')[0] == str(i.id)]
+            
+        return render(request, 'backend_site/suspects_list.html', {'suspect_data': suspect_data,
+                                                                   'data': user_data, 'length':len(suspect_data),
+                                                                   'title': 'All Reports', 'sub_title':'Reports'})
+    else:
+        return redirect('login')
+
+
+"""
+This function is to display suspect that are "Wanted"
+"""
+def wanted_suspect_list(request):
+    if request.session.has_key('login_id'):
+        user_data = controller_user.objects.get(id=request.session['login_id'])
         suspect_data = suspect_person_detail.objects.all()
     
         wanted_suspects = []
@@ -248,14 +267,67 @@ def suspect_list(request):
                 wanted_suspects.append(data)
 
 
-        for i in suspect_data:
+        for i in wanted_suspects:
             # images = [img for img in os.listdir(destination) if img.split('_')[0] =
             i.image = [img for img in os.listdir(destination) if img.split('-')[0] == str(i.id)]
             
         return render(request, 'backend_site/suspects_list.html', {'suspect_data': wanted_suspects,
-                                                                   'data': data, 'length':len(suspect_data)})
+                                                                   'data': user_data, 'length':len(wanted_suspects),
+                                                                   'title': 'Wanted List', 'sub_title':'Wanted List'},)
     else:
         return redirect('login')
+
+
+"""
+This function is to display suspect that case are resolve
+"""
+def case_reslove_list(request):
+    if request.session.has_key('login_id'):
+        user_data = controller_user.objects.get(id=request.session['login_id'])
+        suspect_data = suspect_person_detail.objects.all()
+    
+        resolve_suspects = []
+        for data in suspect_data:
+            if data.status == 2:
+                resolve_suspects.append(data)
+
+
+        for i in resolve_suspects:
+            # images = [img for img in os.listdir(destination) if img.split('_')[0] =
+            i.image = [img for img in os.listdir(destination) if img.split('-')[0] == str(i.id)]
+            
+        return render(request, 'backend_site/suspects_list.html', {'suspect_data': resolve_suspects,
+                                                                   'data': user_data, 'length':len(resolve_suspects),
+                                                                   'title': 'Resolve Cases', 'sub_title':'Resolve Case'},)
+    else:
+        return redirect('login')
+
+
+"""
+This function is to display suspect that are "Found"
+"""
+def suspect_found_list(request):
+    if request.session.has_key('login_id'):
+        user_data = controller_user.objects.get(id=request.session['login_id'])
+        suspect_data = suspect_person_detail.objects.all()
+    
+        resolve_suspects = []
+        for data in suspect_data:
+            if data.status == 1:
+                resolve_suspects.append(data)
+
+
+        for i in resolve_suspects:
+            # images = [img for img in os.listdir(destination) if img.split('_')[0] =
+            i.image = [img for img in os.listdir(destination) if img.split('-')[0] == str(i.id)]
+            
+        return render(request, 'backend_site/suspects_list.html', {'suspect_data': resolve_suspects,
+                                                                   'data': user_data, 'length':len(resolve_suspects),
+                                                                   'title': 'Suspect Found', 'sub_title':'Found suspects'},)
+    else:
+        return redirect('login')
+
+
 
 
 def identify_suspects(request):
