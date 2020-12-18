@@ -29,42 +29,29 @@ def getReport(request, sid):
 
 @csrf_exempt
 def uploadSuspect(request):
-    data = {}
     if request.method == "POST":
         try: 
-            data['user_id'] = app_user.objects.get(id=request.POST['user_id'])
-            data['description'] = request.POST['description']
+            app_user_instance = app_user.objects.get(id=request.POST['user_id'])
             suspect_video = request.FILES['suspect_video']
-
             fs = FileSystemStorage()
             uploaded_file = fs.save(suspect_video.name, suspect_video)
-
-            data['video_url'] = fs.url(uploaded_file)
-
-            obj = suspect_from_app_User(user_id=data['user_id'], description=data['description'], video_url=data['video_url'])
+            obj = suspect_from_app_User(user_id=app_user_instance, description=request.POST['description'], video_url=fs.url(uploaded_file))
             obj.save()
             return JsonResponse({"msg": "Successfull upload"}, safe=True)
         except:
             return JsonResponse({"msg": "error"}, safe=True)
-
     else:
         return JsonResponse({"msg": "error: use post method"}, safe=True)
 
 
 @csrf_exempt
 def uploadSuspect_anonymous(request):
-    data = {}
     if request.method == "POST":
         try: 
-            data['description'] = request.POST['description']
             suspect_video = request.FILES['suspect_video']
-
             fs = FileSystemStorage()
             uploaded_file = fs.save(suspect_video.name, suspect_video)
-
-            data['video_url'] = fs.url(uploaded_file)
-
-            obj = suspect_from_anonymous(description=data['description'], video_url=data['video_url'])
+            obj = suspect_from_anonymous(description=request.POST['description'], video_url=fs.url(uploaded_file))
             obj.save()
             return JsonResponse({"msg": "Successfull upload"}, safe=True)
         except:
@@ -72,5 +59,9 @@ def uploadSuspect_anonymous(request):
 
     else:
         return JsonResponse({"msg": "error: use post method"}, safe=True)
+
+
+# @csrf_exempt
+# def creat_app_user(request):
 
         
