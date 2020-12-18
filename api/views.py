@@ -53,15 +53,28 @@ def uploadSuspect_anonymous(request):
             uploaded_file = fs.save(suspect_video.name, suspect_video)
             obj = suspect_from_anonymous(description=request.POST['description'], video_url=fs.url(uploaded_file))
             obj.save()
-            return JsonResponse({"msg": "Successfull upload"}, safe=True)
+            return JsonResponse({"response": "201 created"}, safe=True)
         except:
-            return JsonResponse({"msg": "error"}, safe=True)
+            return JsonResponse({"response": "403 Forbidden"}, safe=True)
 
     else:
-        return JsonResponse({"msg": "error: use post method"}, safe=True)
+        return JsonResponse({"response": "405 Method Not Allowed"}, safe=True)
 
 
-# @csrf_exempt
-# def creat_app_user(request):
+@csrf_exempt
+def creat_app_user(request):
+    if request.method == "POST":
+        try: 
+            suspect_video = request.FILES['suspect_video']
+            fs = FileSystemStorage()
+            uploaded_file = fs.save(suspect_video.name, suspect_video)
+            obj = suspect_from_anonymous(description=request.POST['description'], video_url=fs.url(uploaded_file))
+            obj.save()
+            return JsonResponse({"response": "201 created"}, safe=True)
+        except:
+            return JsonResponse({"response": "403 Forbidden"}, safe=True)
+
+    else:
+        return JsonResponse({"response": "405 Method Not Allowed"}, safe=True)
 
         
