@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'backend_site.apps.BackendSiteConfig',
     'api',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -139,3 +140,11 @@ MEDIA_URL = '/media/'
 # settings.py
 
 PRIVATE_STORAGE_ROOT = os.path.join(BASE_DIR, 'media/backend_site/dataset_suspected')
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
