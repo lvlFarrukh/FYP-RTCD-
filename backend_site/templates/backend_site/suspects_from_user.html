@@ -16,6 +16,14 @@
         text-align: center;
         margin-bottom: 20px;
     }
+    .suspect_img {
+      width: 90%; 
+      margin: 10px;
+      cursor: pointer;
+    }
+    .suspect_img:hover{
+      width: 100%;
+    }
 
   </style>
 
@@ -88,8 +96,9 @@
                                             <td tabindex="0" class="sorting_1">{{ val.user_id.id }}</td>
                                             <td>{{ val.user_id.cnic }}</td>
                                             <td>{{ val.description }}</td>
-                                            <td><button class="btn btn-outline-success img-btn" data-toggle="modal" data-target="#exampleModalLong">Process for Approved</button></td>
+                                            <td><button class="btn btn-outline-success img-btn" onclick="showVideoModal('{{val.video_url}}')">Process for Approved</button></td>
                                           </tr>
+                                          
                                         {% endfor %}
                                       
                                       </tbody>
@@ -107,7 +116,7 @@
 
 
               <!-- Modal -->
-              <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+              <div class="modal fade" id="modal_video_show" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                 <div class="modal-dialog show_video_images" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -118,14 +127,28 @@
                     </div>
                         <div class="modal-body">
                           <div class="container video-div">
-                            <video width="500" controls>
-                              <source src="/media/big_buck_bunny_720p_1mb_DJtdsJI.mp4" type="video/mp4">
+                            <video width="500" id="videoSrc" controls>
+                              <source src="" type="video/mp4">
                               <!-- <source src="mov_bbb.ogg" type="video/ogg"> -->
                               Your browser does not support HTML video.
                             </video>
-                  
                           </div>
                           
+                          <div class="container">
+                            <div class="row">
+
+                              <div class="col-12" style="text-align: center;">
+                                <button id="detectFace" class="btn btn-outline-danger">
+                                  Detect Faces
+                                </button>
+                              </div>
+
+                              <div class="col-2"> 
+                                <img class="suspect_img" src="/media/suspect_images/52-suspect.jpg" alt="">
+                              </div>
+                              
+                            </div>
+                          </div>
                           
                         </div>
                     <div class="modal-footer">
@@ -169,5 +192,30 @@
     });
   });
 
+  const showVideoModal = url=> {
+    const videoSrc = document.getElementById('videoSrc')
+    videoSrc.src = url
+    videoSrc.load()
+
+    const detectBtn = document.getElementById("detectFace")
+    detectBtn.setAttribute("onclick", `scanVideo('${url}')`)
+
+    $('#modal_video_show').modal('show')
+  }
+
+  const scanVideo = url=> {
+    $.ajax({
+        url: '/controller/checkAjax/',
+        data: {
+          'url': url
+        },
+        dataType: 'json',
+        success: function (data) {
+          if (data.is_taken) {
+            alert("A user with this username already exists.");
+          }
+        }
+      });
+  }
   </script>
 {%endblock%}

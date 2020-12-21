@@ -419,3 +419,8 @@ def appUser_anonymous(request):
                                                                 'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
     else:
         return redirect('login')
+
+
+def scan_video(request):
+    video_url = request.GET.get('url')
+    return redirect('login')
