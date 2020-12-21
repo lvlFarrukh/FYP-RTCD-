@@ -5,6 +5,21 @@
 {% block user_image %}{{ data.image }}{% endblock %}
 {% block username %}{{ data.name }}{% endblock %}
 
+{%block css%}
+
+  <style>
+    .show_video_images {
+        max-width: 80% !important;
+        margin-top: 0px !important;
+    }
+    .video-div {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+  </style>
+
+{%endblock%}
 
 {% block body %}
 {% load static %}
@@ -73,10 +88,8 @@
                                             <td tabindex="0" class="sorting_1">{{ val.user_id.id }}</td>
                                             <td>{{ val.user_id.cnic }}</td>
                                             <td>{{ val.description }}</td>
-                                            <td><button class="btn btn-outline-success img-btn">Process for Approved</button></td>
+                                            <td><button class="btn btn-outline-success img-btn" data-toggle="modal" data-target="#exampleModalLong">Process for Approved</button></td>
                                           </tr>
-
-                                          <span id="suspect-{{val.id}}" style="display: none">{{val.first_name}}--{{val.last_name}}--{{val.gender}}--{{val.cnic}}--{{val.address}}--{{val.education}}--{{val.marital_status}}--{{val.age}}--{{val.date_of_birth}}--{{val.nationalilty}}--{{val.entry_date}}--{{val.status}}--{{val.description}}</span>
                                         {% endfor %}
                                       
                                       </tbody>
@@ -92,6 +105,36 @@
                 </div>
              </section>
 
+
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                <div class="modal-dialog show_video_images" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Choose Suspect</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                        <div class="modal-body">
+                          <div class="container video-div">
+                            <video width="500" controls>
+                              <source src="/media/big_buck_bunny_720p_1mb_DJtdsJI.mp4" type="video/mp4">
+                              <!-- <source src="mov_bbb.ogg" type="video/ogg"> -->
+                              Your browser does not support HTML video.
+                            </video>
+                  
+                          </div>
+                          
+                          
+                        </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary">Approved</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
 
 
