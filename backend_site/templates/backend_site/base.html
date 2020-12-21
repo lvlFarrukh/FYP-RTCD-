@@ -110,6 +110,39 @@
             </a>
           </li>
 
+          
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-upload"></i>
+              <p>
+                User Complains
+                <i class="right fas fa-angle-left"></i>
+              </p>
+              <span class="Qn-num" style="right: 32px">{% block user_complain %}{% endblock %}</span>
+
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item" style="padding-left: 10px">
+                <a href="/controller/appUser_registered" class="nav-link">
+                  <i class="nav-icon fas fa-angle-right"></i>
+                  <p>
+                    Registered User
+                  </p>
+                  <span class="Qn-num">{% block c_register %}{% endblock %}</span>
+                </a>
+              </li>
+              <li class="nav-item" style="padding-left: 10px">
+                <a href="/controller/appUser_anonymous" class="nav-link">
+                  <i class="nav-icon fas fa-angle-right"></i>
+                  <p>
+                    Anonyemous
+                  </p>
+                  <span class="Qn-num">{% block c_anonymous %}{% endblock %}</span>
+                </a>
+              </li>
+            </ul>
+          </li> 
+
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-user-secret"></i>

@@ -13,7 +13,7 @@ from django.core.files.storage import FileSystemStorage
 
 
 
-def index(request):
+def check_api(request):
     print(suspect_person_detail)
     return HttpResponse("Pakistan zindabad")
 

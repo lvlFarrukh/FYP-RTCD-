@@ -15,6 +15,8 @@ urlpatterns = [
         path('wanted_list/', views.wanted_suspect_list, name='wanted_suspect_list'),
         path('case_reslove/', views.case_reslove_list, name='case_reslove_list'),
         path('suspect_found/', views.suspect_found_list, name='suspect_found_list'),
+        path('appUser_registered/', views.appUser_registered, name='appUser_registered'),
+        path('appUser_anonymous/', views.appUser_anonymous, name='appUser_anonymous'),
         # path('faceRecognization/', views.face_check, name='face_check'),
 
 ]

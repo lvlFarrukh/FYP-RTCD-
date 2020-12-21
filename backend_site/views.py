@@ -76,10 +76,15 @@ def index(request):
         count1 = len(suspect_person_detail.objects.all())
         # print(count1)
         data.name = data.name.split(" ")[0]
-        return render(request, 'backend_site/index.html', {'data': data, 'front_count':[count1]})
+
+        regist_sus = len(suspect_from_app_User.objects.all())
+        anon_sus = len(suspect_from_anonymous.objects.all())
+        all_sus = regist_sus + anon_sus
+
+        return render(request, 'backend_site/index.html', {'data': data, 'front_count':[count1],
+                                                            'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
     else:
         return redirect('login')
-
 
 
 """
@@ -172,7 +177,6 @@ def add_suspect_data(request):
         return redirect('Add_suspect')
 
 
-
 """
 This function is for update suspect data 
 """
@@ -229,7 +233,13 @@ def user(request):
     if request.session.has_key('login_id'):
         data = controller_user.objects.get(id=request.session['login_id'])
         data.name = data.name.split(" ")[0]
-        return render(request, 'backend_site/user.html', {'data': data})
+
+        regist_sus = len(suspect_from_app_User.objects.all())
+        anon_sus = len(suspect_from_anonymous.objects.all())
+        all_sus = regist_sus + anon_sus
+
+        return render(request, 'backend_site/user.html', {'data': data,
+                                                          'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
     else:
         return redirect('login')
 
@@ -245,10 +255,15 @@ def suspect_list(request):
         for i in suspect_data:
             # images = [img for img in os.listdir(destination) if img.split('_')[0] =
             i.image = [img for img in os.listdir(destination) if img.split('-')[0] == str(i.id)]
+
+        regist_sus = len(suspect_from_app_User.objects.all())
+        anon_sus = len(suspect_from_anonymous.objects.all())
+        all_sus = regist_sus + anon_sus
             
         return render(request, 'backend_site/suspects_list.html', {'suspect_data': suspect_data,
                                                                    'data': user_data, 'length':len(suspect_data),
-                                                                   'title': 'All Reports', 'sub_title':'Reports'})
+                                                                   'title': 'All Reports', 'sub_title':'Reports',
+                                                                   'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
     else:
         return redirect('login')
 
@@ -328,8 +343,9 @@ def suspect_found_list(request):
         return redirect('login')
 
 
+"""
 
-
+"""
 def identify_suspects(request):
     if request.session.has_key('login_id'):
         data = controller_user.objects.get(id=request.session['login_id'])
@@ -342,5 +358,64 @@ def identify_suspects(request):
             # print(identify_suspect.first_name)
             return render(request, 'backend_site/identify_suspects.html', {'identify_suspect': identify_suspect,
                                                                        'data': data, 'length': 0})
+    else:
+        return redirect('login')
+
+
+"""
+list for uploading video from resgister user
+"""
+def appUser_registered(request):
+    if request.session.has_key('login_id'):
+        data = controller_user.objects.get(id=request.session['login_id'])
+        suspects_data = suspect_from_app_User.objects.all()
+        all_suspect = []
+        for suspect in suspects_data: 
+            if suspect.status == 0:
+                all_suspect.append(suspect)
+        
+        regist_sus = len(suspect_from_app_User.objects.all())
+        anon_sus = len(suspect_from_anonymous.objects.all())
+        all_sus = regist_sus + anon_sus
+        try:
+            return render(request, 'backend_site/suspects_from_user.html', {'all_suspect': all_suspect,
+                                                                            'data': data, 'length':len(all_suspect),
+                                                                            'title': 'Suspect from Registered user', 'sub_title':'AppUser Suspect',
+                                                                            'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
+        except:
+            # print(identify_suspect.first_name)
+            return render(request, 'backend_site/index.html', {'data': data, 'length': 0,
+                                                               'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
+    else:
+        return redirect('login')
+
+
+"""
+list for uploading video from anonymous user
+"""
+def appUser_anonymous(request):
+    if request.session.has_key('login_id'):
+        data = controller_user.objects.get(id=request.session['login_id'])
+        suspects_data = suspect_from_anonymous.objects.all()
+        all_suspect = []
+        for suspect in suspects_data: 
+            if suspect.status == 0:
+                all_suspect.append(suspect)
+
+        regist_sus = len(suspect_from_app_User.objects.all())
+        anon_sus = len(suspect_from_anonymous.objects.all())
+        all_sus = regist_sus + anon_sus
+
+        # print(regist_sus,'===',anon_sus,'===',all_sus)
+
+        try:
+            return render(request, 'backend_site/suspect_from_anonymous.html', {'all_suspect': all_suspect,
+                                                                            'data': data, 'length':len(all_suspect),
+                                                                            'title': 'Suspect from Anonymous user', 'sub_title':'AppUser Suspect',
+                                                                            'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
+        except:
+            # print(identify_suspect.first_name)
+            return render(request, 'backend_site/index.html', {'data': data, 'length': 0,
+                                                                'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
     else:
         return redirect('login')
