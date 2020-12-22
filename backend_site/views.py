@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.sessions.models import Session
 from django.shortcuts import HttpResponse
 from django.core.files.storage import FileSystemStorage
+from django.http import JsonResponse
 import os
 import json
 import time
@@ -423,4 +424,10 @@ def appUser_anonymous(request):
 
 def scan_video(request):
     video_url = request.GET.get('url')
-    return redirect('login')
+    video_imgs_urlName = video_url.split("/")[2].split(".")[0]
+    images_dir = os.path.join(Base_dir, 'video_images')
+
+    video_imgs_dir = os.path.join(images_dir, video_imgs_urlName)
+    print(video_imgs_dir)
+
+    return JsonResponse({'name': 'farrukh'})
