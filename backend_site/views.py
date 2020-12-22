@@ -42,7 +42,7 @@ This function extract face eadges for face detection
 """
 def recognize_face(frame, suspect_id, required_size=(224, 224)):
     pixels = plt.imread(frame)
-    time.sleep(5)
+    # time.sleep(5)
     results = classifier.detectMultiScale(pixels)  
     samples = []
     for faces in results:
@@ -428,6 +428,14 @@ def scan_video(request):
     images_dir = os.path.join(Base_dir, 'video_images')
 
     video_imgs_dir = os.path.join(images_dir, video_imgs_urlName)
-    print(video_imgs_dir)
+
+    c = 0
+    cap = cv2.VideoCapture('/media/big_buck_bunny_720p_1mb_3zal1av.mp4') 
+    while (cap.isOpened()): 
+        c += 1
+        ret, frame = cap.read() 
+        print(c)
+
+    print(video_url)
 
     return JsonResponse({'name': 'farrukh'})
