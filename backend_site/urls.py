@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from .import views
 
 urlpatterns = [
         path('', views.index, name='index' ),
@@ -19,6 +19,7 @@ urlpatterns = [
         path('appUser_anonymous/', views.appUser_anonymous, name='appUser_anonymous'),
         path('extractFaces/', views.scan_video, name='scan_video'),
         path('deleteComplain/', views.delete_user_complain, name='delete_user_complain'),
+        path('addSuspect/', views.add_suspect_from_video, name='add_suspect_from_video'),
         # path('faceRecognization/', views.face_check, name='face_check'),
 
 ]

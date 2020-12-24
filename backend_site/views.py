@@ -5,10 +5,11 @@ from django.contrib.sessions.models import Session
 from django.shortcuts import HttpResponse
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
+from rest_framework.parsers import JSONParser
 import os
 import json
 import time
-
+import io
 # import pickle
 import shutil
 
@@ -446,6 +447,9 @@ def delete_user_complain(request):
     return JsonResponse({'msg': 'Successfully Deleted!'})
 
 
+"""
+This function is call by 'scan_video' function to process video
+"""
 def process_video(url, imgs_dir):
     c = 0
     cap = cv2.VideoCapture(f".{url}") 
@@ -462,6 +466,10 @@ def process_video(url, imgs_dir):
                 cv2.imwrite(img_path, frame[y:y+h, x:x+w])
               
 
+"""
+This function is call by ajax from frontend javascript code.
+It scan video and extract all the face from it and display on frontend.
+"""
 def scan_video(request):
     video_url = request.GET.get('url')
     video_imgs_urlName = video_url.split("/")[2].split(".")[0]
@@ -477,3 +485,18 @@ def scan_video(request):
     all_images = os.listdir(video_imgs_dir)
 
     return JsonResponse({'images': all_images, 'path': video_imgs_urlName})
+
+
+"""
+
+"""
+def add_suspect_from_video(request):
+    imgs_arr = request.GET.get('imgs_arr')
+    video_url = request.GET.get('img_url').split("/")[-1].split('.')[0]
+    print(video_url)
+    images = json.loads(imgs_arr)['imgs']
+
+
+    
+
+    return JsonResponse({'msg': "Successfully saved!"})

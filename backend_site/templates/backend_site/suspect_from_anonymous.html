@@ -147,6 +147,10 @@
                             </video>
                           </div>
 
+                          <div class="col-12" id="img_counter" style="margin-left: 10px; color: red">
+                            <h5>Selected Images 5/<span id="img_counter_no">0</span></h5>
+                          </div>
+
                           <div class="col-12" style="text-align: center;">
                             <img src="/media/backend_site/loader.gif" style="width: 50px" id="loader" alt="">
                           </div>
@@ -162,7 +166,7 @@
                         </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Approved</button>
+                      <button id="cABtn" type="button" class="btn btn-primary" disabled>Approved</button>
                     </div>
                   </div>
                 </div>
@@ -217,6 +221,7 @@
   }
 
   let select_imgs_name = [];
+  let selected_img = 0
 
   const img_div_tag = (img, path)=> {
     main_container = document.getElementById('image_list')
@@ -232,6 +237,7 @@
   } 
 
   const show_faces = data=> {
+    document.getElementById('img_counter').style.display = ""
     document.getElementById('loader').style.display = "none"
     data.images.map(v => {
       img_div_tag(v, data.path)
@@ -260,7 +266,7 @@
     while (main_div.firstChild) {
       main_div.removeChild(main_div.lastChild);
     }
-
+    document.getElementById('img_counter').style.display = "none"
     document.getElementById('loader').style.display = ""
     $('#modal_video_show').modal('show')
 
@@ -271,17 +277,19 @@
     let img = document.getElementById(id)
     
     if (img.getAttribute('class') == 'suspect_img') {
-      img.setAttribute('class', 'select_border') 
-      select_imgs_name.push(id)
+      if (selected_img < 5){
+        img.setAttribute('class', 'select_border') 
+        select_imgs_name.push(id)
+        selected_img += 1
+        document.getElementById('img_counter_no').innerHTML = selected_img
+      }
     }
     else {
       img.setAttribute('class', 'suspect_img') 
       select_imgs_name = select_imgs_name.filter(item=> item !== id)
-    }
-
-
-    console.log(select_imgs_name)
-    
+      selected_img -= 1
+      document.getElementById('img_counter_no').innerHTML = selected_img   
+    }    
   }
 
   </script>

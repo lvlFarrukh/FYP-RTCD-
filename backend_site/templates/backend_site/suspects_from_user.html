@@ -146,6 +146,10 @@
                             </video>
                           </div>
 
+                          <div class="col-12" id="img_counter" style="margin-left: 10px; color: red">
+                            <h5>Selected Images 5/<span id="img_counter_no">0</span></h5>
+                          </div>
+
                           <div class="col-12" style="text-align: center;">
                             <img src="/media/backend_site/loader.gif" style="width: 50px" id="loader" alt="">
                           </div>
@@ -161,7 +165,7 @@
                         </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Approved</button>
+                      <button id="cABtn" onclick="approvedComplain()" type="button" class="btn btn-primary" >Approved</button>
                     </div>
                   </div>
                 </div>
@@ -200,6 +204,27 @@
     });
   });
 
+  let select_imgs_name = [];
+  let selected_img = 0;
+
+  const approvedComplain = ()=> {
+    img_url = document.getElementById('videoSrc').src
+    if (confirm("You really want to Add this Suspect?")){
+      $.ajax({
+        url: '/controller/addSuspect/',
+        data: {
+          'imgs_arr': JSON.stringify({'imgs' : select_imgs_name}),
+          'img_url': img_url
+        },
+        dataType: 'json',
+        success: function (data) {
+          alert(data.msg)
+        }
+      });
+    }
+    
+  }
+  
   const delete_complain = (id)=>{
     if (confirm("You really want to delete this")){
       $.ajax({
@@ -217,8 +242,6 @@
     }
   }
 
-  let select_imgs_name = [];
-
   const img_div_tag = (img, path)=> {
     main_container = document.getElementById('image_list')
     img_div = document.createElement('div')
@@ -226,13 +249,14 @@
     img_tag = document.createElement('img')
     img_tag.setAttribute('class', 'suspect_img')
     img_tag.setAttribute('src', `/media/video_images/${path}/${img}`)
-    img_tag.setAttribute('id', img.split('.')[0])
+    img_tag.setAttribute('id', img)
     img_tag.setAttribute('onclick', `select_img(id)`)
     img_div.appendChild(img_tag)
     main_container.appendChild(img_div)
   } 
 
   const show_faces = data=> {
+    document.getElementById('img_counter').style.display = ""
     document.getElementById('loader').style.display = "none"
     data.images.map(v => {
       img_div_tag(v, data.path)
@@ -253,6 +277,7 @@
   }
 
   const showVideoModal = url=> {
+    document.getElementById('cABtn').disabled = true
     const videoSrc = document.getElementById('videoSrc')
     videoSrc.src = url
     videoSrc.load()
@@ -262,6 +287,7 @@
       main_div.removeChild(main_div.lastChild);
     }
 
+    document.getElementById('img_counter').style.display = "none"
     document.getElementById('loader').style.display = ""
     $('#modal_video_show').modal('show')
 
@@ -272,14 +298,29 @@
     let img = document.getElementById(id)
     
     if (img.getAttribute('class') == 'suspect_img') {
-      img.setAttribute('class', 'select_border') 
-      select_imgs_name.push(id)
+      if (selected_img < 5){
+        img.setAttribute('class', 'select_border') 
+        select_imgs_name.push(id)
+        selected_img += 1
+        document.getElementById('img_counter_no').innerHTML = selected_img
+      }
     }
     else {
       img.setAttribute('class', 'suspect_img') 
       select_imgs_name = select_imgs_name.filter(item=> item !== id)
-    }    
+      selected_img -= 1
+      document.getElementById('img_counter_no').innerHTML = selected_img   
+    } 
+    
+    if (selected_img > 0) {
+    document.getElementById('cABtn').disabled = false
+    }
+    else{
+      document.getElementById('cABtn').disabled = true
+    }
   }
+
+  
 
   // setInterval(()=>{
   //   console.log("Working")
