@@ -20,9 +20,18 @@
       width: 90%; 
       margin: 10px;
       cursor: pointer;
+      border-radius: 2px;
     }
-    .suspect_img:hover{
-      width: 100%;
+    .suspect_img:hover, .select_border:hover{
+      margin: 0px;
+      width: 120%;
+    }
+    .select_border {
+      border: 2px solid red;
+      width: 120%; 
+      margin: 3px;
+      cursor: pointer;
+      border-radius: 2px;
     }
 
   </style>
@@ -96,7 +105,10 @@
                                             <td tabindex="0" class="sorting_1">{{ val.user_id.id }}</td>
                                             <td>{{ val.user_id.cnic }}</td>
                                             <td>{{ val.description }}</td>
-                                            <td><button class="btn btn-outline-success img-btn" onclick="showVideoModal('{{val.video_url}}')">Process for Approved</button></td>
+                                            <td>
+                                              <button class="btn btn-outline-success img-btn" onclick="showVideoModal('{{val.video_url}}')">Process for Approved</button>
+                                              <button onclick="delete_complain({{val.id}})" class="btn btn-outline-danger img-btn"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                            </td>
                                           </tr>
                                           
                                         {% endfor %}
@@ -133,19 +145,15 @@
                               Your browser does not support HTML video.
                             </video>
                           </div>
+
+                          <div class="col-12" style="text-align: center;">
+                            <img src="/media/backend_site/loader.gif" style="width: 50px" id="loader" alt="">
+                          </div>
                           
                           <div class="container">
-                            <div class="row">
-
-                              <div class="col-12" style="text-align: center;">
-                                <button id="detectFace" class="btn btn-outline-danger">
-                                  Detect Faces
-                                </button>
-                              </div>
-
-                              <div class="col-2"> 
-                                <img class="suspect_img" src="/media/suspect_images/52-suspect.jpg" alt="">
-                              </div>
+                            <div class="row" id="image_list">
+                            
+                              <!-- Images are show using js function here -->
                               
                             </div>
                           </div>
@@ -192,28 +200,95 @@
     });
   });
 
-  const showVideoModal = url=> {
-    const videoSrc = document.getElementById('videoSrc')
-    videoSrc.src = url
-    videoSrc.load()
+  const delete_complain = (id)=>{
+    if (confirm("You really want to delete this")){
+      $.ajax({
+        url: '/controller/deleteComplain/',
+        data: {
+          'id': id,
+          'selector': 0
+        },
+        dataType: 'json',
+        success: function (data) {
+          alert(data.msg)
+          location.reload()
+        }
+      });
+    }
+  }
 
-    const detectBtn = document.getElementById("detectFace")
-    detectBtn.setAttribute("onclick", `scanVideo('${url}')`)
+  let select_imgs_name = [];
 
-    $('#modal_video_show').modal('show')
+  const img_div_tag = (img, path)=> {
+    main_container = document.getElementById('image_list')
+    img_div = document.createElement('div')
+    img_div.setAttribute('class', 'col-1')
+    img_tag = document.createElement('img')
+    img_tag.setAttribute('class', 'suspect_img')
+    img_tag.setAttribute('src', `/media/video_images/${path}/${img}`)
+    img_tag.setAttribute('id', img.split('.')[0])
+    img_tag.setAttribute('onclick', `select_img(id)`)
+    img_div.appendChild(img_tag)
+    main_container.appendChild(img_div)
+  } 
+
+  const show_faces = data=> {
+    document.getElementById('loader').style.display = "none"
+    data.images.map(v => {
+      img_div_tag(v, data.path)
+    })
   }
 
   const scanVideo = url=> {
     $.ajax({
-        url: '/controller/checkAjax/',
+        url: '/controller/extractFaces/',
         data: {
           'url': url
         },
         dataType: 'json',
         success: function (data) {
-          console.log(data)
+          show_faces(data)
         }
       });
   }
+
+  const showVideoModal = url=> {
+    const videoSrc = document.getElementById('videoSrc')
+    videoSrc.src = url
+    videoSrc.load()
+
+    main_div = document.getElementById('image_list')
+    while (main_div.firstChild) {
+      main_div.removeChild(main_div.lastChild);
+    }
+
+    document.getElementById('loader').style.display = ""
+    $('#modal_video_show').modal('show')
+
+    scanVideo(url)
+  }
+
+  const select_img = id=> {
+    let img = document.getElementById(id)
+    
+    if (img.getAttribute('class') == 'suspect_img') {
+      img.setAttribute('class', 'select_border') 
+      select_imgs_name.push(id)
+    }
+    else {
+      img.setAttribute('class', 'suspect_img') 
+      select_imgs_name = select_imgs_name.filter(item=> item !== id)
+    }
+
+
+    console.log(select_imgs_name)
+    
+  }
+
+  // setInterval(()=>{
+  //   console.log("Working")
+  // }, 1000)
+
+  
   </script>
 {%endblock%}

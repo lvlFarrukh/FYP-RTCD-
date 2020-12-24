@@ -5,9 +5,44 @@
 {% block user_image %}{{ data.image }}{% endblock %}
 {% block username %}{{ data.name }}{% endblock %}
 
+{%block css%}
+
+  <style>
+    .show_video_images {
+        max-width: 80% !important;
+        margin-top: 0px !important;
+    }
+    .video-div {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .suspect_img {
+      width: 90%; 
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    .suspect_img:hover, .select_border:hover{
+      margin: 0px;
+      width: 120%;
+    }
+    .select_border {
+      border: 2px solid red;
+      width: 120%; 
+      margin: 3px;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+
+  </style>
+
+{%endblock%}
+
+
 
 {% block body %}
 {% load static %}
+
 
 {% block user_complain %}{{ all_sus }}{% endblock %}
 {% block c_register %}{{ r_sus }}{% endblock %}
@@ -71,10 +106,13 @@
                                           <tr role="row" class="odd">
                                             <td>{{ val.report_date }}</td>
                                             <td>{{ val.description }}</td>
-                                            <td><button class="btn btn-outline-success img-btn">Process for Approved</button></td>
+                                            <td>
+                                              <button onclick="showVideoModal('{{val.video_url}}')" class="btn btn-outline-success img-btn">Process for Approved</button>
+                                              <button onclick="delete_complain({{val.id}})" class="btn btn-outline-danger img-btn"><i class="fa fa-trash" aria-hidden="true"></i></button>
+  
+                                            </td>
                                           </tr>
 
-                                          <span id="suspect-{{val.id}}" style="display: none">{{val.first_name}}--{{val.last_name}}--{{val.gender}}--{{val.cnic}}--{{val.address}}--{{val.education}}--{{val.marital_status}}--{{val.age}}--{{val.date_of_birth}}--{{val.nationalilty}}--{{val.entry_date}}--{{val.status}}--{{val.description}}</span>
                                         {% endfor %}
                                       
                                       </tbody>
@@ -90,8 +128,45 @@
                 </div>
              </section>
 
+             <!-- Modal -->
+              <div class="modal fade" id="modal_video_show" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                <div class="modal-dialog show_video_images" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Choose Suspect</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                        <div class="modal-body">
+                          <div class="container video-div">
+                            <video width="500" id="videoSrc" controls>
+                              <source src="" type="video/mp4">
+                              <!-- <source src="mov_bbb.ogg" type="video/ogg"> -->
+                              Your browser does not support HTML video.
+                            </video>
+                          </div>
 
-
+                          <div class="col-12" style="text-align: center;">
+                            <img src="/media/backend_site/loader.gif" style="width: 50px" id="loader" alt="">
+                          </div>
+                          
+                          <div class="container">
+                            <div class="row" id="image_list">
+                            
+                              <!-- Images are show using js function here -->
+                              
+                            </div>
+                          </div>
+                          
+                        </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary">Approved</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
         </div>     
       </section>
@@ -123,6 +198,74 @@
       "responsive": true,
     });
   });
+
+  const delete_complain = (id)=>{
+    if (confirm("You really want to delete this")){
+      $.ajax({
+        url: '/controller/deleteComplain/',
+        data: {
+          'id': id,
+          'selector': 1
+        },
+        dataType: 'json',
+        success: function (data) {
+          alert(data.msg)
+          location.reload()
+        }
+      });
+    }
+  }
+
+  let select_imgs_name = [];
+
+  const img_div_tag = (img, path)=> {
+    main_container = document.getElementById('image_list')
+    img_div = document.createElement('div')
+    img_div.setAttribute('class', 'col-1')
+    img_tag = document.createElement('img')
+    img_tag.setAttribute('class', 'suspect_img')
+    img_tag.setAttribute('src', `/media/video_images/${path}/${img}`)
+    img_tag.setAttribute('id', img.split('.')[0])
+    img_tag.setAttribute('onclick', `select_img(id)`)
+    img_div.appendChild(img_tag)
+    main_container.appendChild(img_div)
+  } 
+
+  const show_faces = data=> {
+    document.getElementById('loader').style.display = "none"
+    data.images.map(v => {
+      img_div_tag(v, data.path)
+    })
+  }
+
+  const scanVideo = url=> {
+    $.ajax({
+        url: '/controller/extractFaces/',
+        data: {
+          'url': url
+        },
+        dataType: 'json',
+        success: function (data) {
+          show_faces(data)
+        }
+      });
+  }
+
+  const showVideoModal = url=> {
+    const videoSrc = document.getElementById('videoSrc')
+    videoSrc.src = url
+    videoSrc.load()
+
+    main_div = document.getElementById('image_list')
+    while (main_div.firstChild) {
+      main_div.removeChild(main_div.lastChild);
+    }
+
+    document.getElementById('loader').style.display = ""
+    $('#modal_video_show').modal('show')
+
+    scanVideo(url)
+  }
 
   </script>
 {%endblock%}

@@ -43,7 +43,7 @@ This function extract face eadges for face detection
 def recognize_face(frame, suspect_id, required_size=(224, 224)):
     pixels = plt.imread(frame)
     # time.sleep(5)
-    results = classifier.detectMultiScale(pixels)  
+    results = classifier.detectMultiScale(pixels, scaleFactor=1.5, minNeighbors=5)   #two argument added
     samples = []
     for faces in results:
         x1, y1, width, height = faces
@@ -422,6 +422,46 @@ def appUser_anonymous(request):
         return redirect('login')
 
 
+"""
+Delete use complain
+"""
+def delete_user_complain(request): 
+    selector = request.GET.get('selector')
+    complain_id = request.GET.get('id')
+
+    if selector == '0':
+        video_url = suspect_from_app_User.objects.get(id=complain_id)
+    else:
+        video_url = suspect_from_anonymous.objects.get(id=complain_id)
+
+    video_imgs_urlName = video_url.video_url.split("/")[2].split(".")[0]
+    images_dir = os.path.join(Base_dir, 'video_images')
+    video_imgs_dir = os.path.join(images_dir, video_imgs_urlName)
+
+    # print(os.listdir(images_dir).count(video_imgs_urlName))
+    if os.listdir(images_dir).count(video_imgs_urlName) > 0:
+        shutil.rmtree(video_imgs_dir)
+    
+    video_url.delete()
+    return JsonResponse({'msg': 'Successfully Deleted!'})
+
+
+def process_video(url, imgs_dir):
+    c = 0
+    cap = cv2.VideoCapture(f".{url}") 
+    while (cap.isOpened()): 
+        ret, frame = cap.read()
+        if( ret != True):
+            break
+        
+        faces = classifier.detectMultiScale(frame, scaleFactor=1.5, minNeighbors=5)   
+        if len(faces) != 0:
+            for (x, y, w, h) in faces:
+                c += 1
+                img_path = os.path.join(imgs_dir, f"suspect{c}.jpg")
+                cv2.imwrite(img_path, frame[y:y+h, x:x+w])
+              
+
 def scan_video(request):
     video_url = request.GET.get('url')
     video_imgs_urlName = video_url.split("/")[2].split(".")[0]
@@ -429,13 +469,11 @@ def scan_video(request):
 
     video_imgs_dir = os.path.join(images_dir, video_imgs_urlName)
 
-    c = 0
-    cap = cv2.VideoCapture('/media/big_buck_bunny_720p_1mb_3zal1av.mp4') 
-    while (cap.isOpened()): 
-        c += 1
-        ret, frame = cap.read() 
-        print(c)
+    if os.listdir(images_dir).count(video_imgs_urlName) < 1:
+        os.mkdir(video_imgs_dir)
+    
+        process_video(video_url, video_imgs_dir)
 
-    print(video_url)
+    all_images = os.listdir(video_imgs_dir)
 
-    return JsonResponse({'name': 'farrukh'})
+    return JsonResponse({'images': all_images, 'path': video_imgs_urlName})

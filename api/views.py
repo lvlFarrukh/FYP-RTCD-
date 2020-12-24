@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import *
 from backend_site.models import suspect_from_app_User, app_user, suspect_from_anonymous
-from .serializers import *
+from .serializers import serializer_suspectData
 from django.http import HttpResponse, JsonResponse
 import sys
 

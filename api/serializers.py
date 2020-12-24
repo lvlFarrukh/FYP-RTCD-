@@ -18,7 +18,7 @@ class serializer_suspectData(serializers.Serializer):
     description = serializers.CharField(max_length=2000, default="unknown")
 
 
-class app_user(serializers.Serializer):
+class app_user_serializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=100, default="unknown")
     last_name = serializers.CharField(max_length=100, default="unknown")
     email = serializers.EmailField(max_length=200, default="unknown")
