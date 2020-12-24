@@ -267,5 +267,22 @@
     scanVideo(url)
   }
 
+  const select_img = id=> {
+    let img = document.getElementById(id)
+    
+    if (img.getAttribute('class') == 'suspect_img') {
+      img.setAttribute('class', 'select_border') 
+      select_imgs_name.push(id)
+    }
+    else {
+      img.setAttribute('class', 'suspect_img') 
+      select_imgs_name = select_imgs_name.filter(item=> item !== id)
+    }
+
+
+    console.log(select_imgs_name)
+    
+  }
+
   </script>
 {%endblock%}

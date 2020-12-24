@@ -6,6 +6,9 @@ def upload_location(instance, filename):
     extension = filename.split('.')[1]
     return f"backend_site/dataset_suspected/{instance.id}_0.{extension}"
 
+"""
+backend site user to update monitor or setect suspect from video
+"""
 class controller_user(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -19,8 +22,10 @@ class controller_user(models.Model):
     def __str__(self):
         return self.name
 
-# Suspect persons models
-
+"""
+suspect database to maintain suspect data
+status: 0 = wanted, 1 = found, 2 = case resolve
+"""
 class suspect_person_detail(models.Model):
     id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=100, default="unknown")
@@ -41,6 +46,10 @@ class suspect_person_detail(models.Model):
     def __str__(self):
         return f"id: {self.id}, Date: {self.entry_date}"
 
+"""
+mobile app user data
+status: 0 = active user, 1 = unactive user
+"""
 class app_user(models.Model):
     id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=100, default="unknown")
@@ -58,6 +67,10 @@ class app_user(models.Model):
     def __str__(self):
         return f"id: {self.id}, cnic: {self.cnic}"
 
+"""
+Mobilr app user complains from registered user
+status: 0 = complain not approved, 1 = approved, 2 = for compairsion with other complains
+"""
 class suspect_from_app_User(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(app_user, on_delete=models.CASCADE)
@@ -69,6 +82,10 @@ class suspect_from_app_User(models.Model):
     def __str__(self):
             return f"id: {self.id}, Report Data: {self.report_date}"
 
+"""
+Mobilr app user complains from anonymous user
+status: 0 = complain not approved, 1 = approved, 2 = for compairsion with other complains
+"""
 class suspect_from_anonymous(models.Model):
     id = models.AutoField(primary_key=True)
     video_url = models.URLField(max_length=200)
