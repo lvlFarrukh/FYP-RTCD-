@@ -39,7 +39,27 @@ model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), 
 
 
 """
-This function extract face eadges for face detection
+Extract face edges
+"""
+def extract_face_edges(frame, suspect_id, required_size=(224, 224)):
+    face = plt.imread(frame)
+    # resize pixels to the model size
+    image = Image.fromarray(face)
+    image = image.resize(required_size)
+    face_array = np.asarray(image)
+    sample = np.asarray(face_array, 'float32')
+    f = preprocess_input(sample, version=2)
+    # yhat = []
+    # for f in samples:
+    face_edges = model.predict(np.expand_dims(f, axis=0))
+    # Here firebase data insertion is perform
+    face_array_list = np.ndarray.tolist(face_edges)
+    face_edges_json = json.dumps(face_array_list)
+    firebase_obj.post('/suspect images', {'id': suspect_id, 'face': face_edges_json})
+
+
+"""
+This function detect face and extract face eadges for face detection
 """
 def recognize_face(frame, suspect_id, required_size=(224, 224)):
     pixels = plt.imread(frame)
@@ -121,7 +141,6 @@ def logout(request):
 This function is use for load add_suspect page
 """
 def add_suspect(request):
-
     if request.session.has_key('login_id'):
         data = controller_user.objects.get(id=request.session['login_id'])
         data.name = data.name.split(" ")[0]
@@ -257,7 +276,7 @@ def suspect_list(request):
         for i in suspect_data:
             # images = [img for img in os.listdir(destination) if img.split('_')[0] =
             i.image = [img for img in os.listdir(destination) if img.split('-')[0] == str(i.id)]
-
+    
         regist_sus = len(suspect_from_app_User.objects.all())
         anon_sus = len(suspect_from_anonymous.objects.all())
         all_sus = regist_sus + anon_sus
@@ -492,11 +511,29 @@ def scan_video(request):
 """
 def add_suspect_from_video(request):
     imgs_arr = request.GET.get('imgs_arr')
-    video_url = request.GET.get('img_url').split("/")[-1].split('.')[0]
-    print(video_url)
+    attr_id = request.GET.get('attr_id')
+    selector = request.GET.get('selector')
+
+    if selector == '0':
+        video_obj = suspect_from_app_User.objects.get(id=attr_id)
+    else:
+        video_obj = suspect_from_anonymous.objects.get(id=attr_id)
+ 
+    video_imgs_urlName = video_obj.video_url.split("/")[-1].split('.')[0]
     images = json.loads(imgs_arr)['imgs']
 
+    images_dir = os.path.join(Base_dir, 'video_images')
+    video_imgs_dir = os.path.join(images_dir, video_imgs_urlName)
 
+    suspect_img_dir = os.path.join(Base_dir, 'suspect_images')
+    data = suspect_person_detail()
+    data.save()
+
+    for i, v in enumerate(images):
+        os.rename(os.path.join(video_imgs_dir, v), os.path.join(video_imgs_dir, f"{data.id}-suspect{i}.jpg"))
+        shutil.copyfile(os.path.join(video_imgs_dir, f"{data.id}-suspect{i}.jpg"), os.path.join(suspect_img_dir, f"{data.id}-suspect{i}.jpg"))
+        extract_face_edges(os.path.join(video_imgs_dir, f"{data.id}-suspect{i}.jpg"), data.id)
     
+    video_obj.delete()
 
     return JsonResponse({'msg': "Successfully saved!"})

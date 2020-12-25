@@ -106,7 +106,7 @@
                                             <td>{{ val.user_id.cnic }}</td>
                                             <td>{{ val.description }}</td>
                                             <td>
-                                              <button class="btn btn-outline-success img-btn" onclick="showVideoModal('{{val.video_url}}')">Process for Approved</button>
+                                              <button class="btn btn-outline-success img-btn" onclick="showVideoModal('{{val.video_url}}', '{{val.id}}')">Process for Approved</button>
                                               <button onclick="delete_complain({{val.id}})" class="btn btn-outline-danger img-btn"><i class="fa fa-trash" aria-hidden="true"></i></button>
                                             </td>
                                           </tr>
@@ -162,6 +162,7 @@
                             </div>
                           </div>
                           
+                          <span style="display: none;" id="video_attr_id"></span>
                         </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -208,17 +209,21 @@
   let selected_img = 0;
 
   const approvedComplain = ()=> {
-    img_url = document.getElementById('videoSrc').src
+    id = document.getElementById('video_attr_id').innerHTML
+    // img_url = document.getElementById('videoSrc').src
     if (confirm("You really want to Add this Suspect?")){
       $.ajax({
         url: '/controller/addSuspect/',
         data: {
           'imgs_arr': JSON.stringify({'imgs' : select_imgs_name}),
-          'img_url': img_url
+          // 'img_url': img_url,
+          'attr_id': id,
+          'selector': 0
         },
         dataType: 'json',
         success: function (data) {
           alert(data.msg)
+          location.reload()
         }
       });
     }
@@ -276,7 +281,8 @@
       });
   }
 
-  const showVideoModal = url=> {
+  const showVideoModal = (url, id)=> {
+    document.getElementById('video_attr_id').innerHTML = id
     document.getElementById('cABtn').disabled = true
     const videoSrc = document.getElementById('videoSrc')
     videoSrc.src = url
