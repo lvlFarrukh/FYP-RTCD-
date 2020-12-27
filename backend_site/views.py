@@ -507,7 +507,7 @@ def scan_video(request):
 
 
 """
-
+This function add suspect into wanted list
 """
 def add_suspect_from_video(request):
     imgs_arr = request.GET.get('imgs_arr')
@@ -534,6 +534,11 @@ def add_suspect_from_video(request):
         shutil.copyfile(os.path.join(video_imgs_dir, f"{data.id}-suspect{i}.jpg"), os.path.join(suspect_img_dir, f"{data.id}-suspect{i}.jpg"))
         extract_face_edges(os.path.join(video_imgs_dir, f"{data.id}-suspect{i}.jpg"), data.id)
     
+    if os.listdir(images_dir).count(video_imgs_urlName) > 0:
+        shutil.rmtree(video_imgs_dir)
+
     video_obj.delete()
 
     return JsonResponse({'msg': "Successfully saved!"})
+
+

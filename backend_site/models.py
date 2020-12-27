@@ -83,7 +83,7 @@ class suspect_from_app_User(models.Model):
             return f"id: {self.id}, Report Data: {self.report_date}"
 
 """
-Mobilr app user complains from anonymous user
+Mobile app user complains from anonymous user
 status: 0 = complain not approved, 1 = approved, 2 = for compairsion with other complains
 """
 class suspect_from_anonymous(models.Model):
@@ -96,6 +96,21 @@ class suspect_from_anonymous(models.Model):
     def __str__(self):
         return f"id: {self.id}, Report Data: {self.report_date}"
 
+
+"""
+for suspect that are catch or track by camera
+"""
+class caught_suspect(models.Model):
+    id = models.AutoField(primary_key=True)
+    suspect_id = models.ForeignKey(suspect_person_detail, on_delete=models.CASCADE)
+    latitude = models.CharField(max_length=100)
+    longitude = models.CharField(max_length=100)
+    report_date_time = models.DateTimeField(default=datetime.datetime.now())
+    suspect_image = models.CharField(max_length=500)
+    status = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"id: {self.id}, Report Data & Time: {self.report_date_time}"
 
 
 
