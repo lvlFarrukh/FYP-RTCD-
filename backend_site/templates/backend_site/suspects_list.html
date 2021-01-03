@@ -5,10 +5,6 @@
 {% block user_image %}{{ data.image }}{% endblock %}
 {% block username %}{{ data.name }}{% endblock %}
 
-{% block user_complain %}{{ all_sus }}{% endblock %}
-{% block c_register %}{{ r_sus }}{% endblock %}
-{% block c_anonymous %}{{ a_sus }}{% endblock %}
-{% block track_suspect %}{% endblock %}
 
 {% block body %}
 {% load static %}
@@ -132,7 +128,6 @@
               </div>
 
               <!-- Modal for showing profile -->
-
               <div class="modal fade" id="showProfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                   <div class="modal-content">

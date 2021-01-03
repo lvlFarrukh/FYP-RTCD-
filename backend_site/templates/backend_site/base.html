@@ -23,8 +23,8 @@
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
-
   {%block css%}{%endblock%}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script
 
 </head>
 <body class="hold-transition sidebar-mini">
@@ -72,13 +72,10 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/controller" class="brand-link">
-     
-        <center><h1>RTCD</h1></center>
-      <!-- <img src="../dist/img/AdminLTELogo.png"
-           alt="AdminLTE Logo"
-           class="brand-image img-circle elevation-3"
-           style="opacity: .8">
-      <span class="brand-text font-weight-light">AdminLTE 3</span> -->
+      <div style="display: -webkit-box;">
+        <img width="50px" src="/media/backend_site/logo-c.png" alt=""> 
+        <center><h1 style="margin-left: 15px">RTCD</h1></center>
+      </div>  
     </a>
 
     <!-- Sidebar -->
@@ -118,7 +115,7 @@
                 User Complains
                 <i class="right fas fa-angle-left"></i>
               </p>
-              <span class="Qn-num" style="right: 32px">{% block user_complain %}{% endblock %}</span>
+              <span id="all_complain" class="Qn-num" style="right: 32px"></span>
 
             </a>
             <ul class="nav nav-treeview">
@@ -128,7 +125,7 @@
                   <p>
                     Registered User
                   </p>
-                  <span class="Qn-num">{% block c_register %}{% endblock %}</span>
+                  <span id="r_complain_n" class="Qn-num"></span>
                 </a>
               </li>
               <li class="nav-item" style="padding-left: 10px">
@@ -137,7 +134,7 @@
                   <p>
                     Anonyemous
                   </p>
-                  <span class="Qn-num">{% block c_anonymous %}{% endblock %}</span>
+                  <span id="a_complain_n" class="Qn-num"></span>
                 </a>
               </li>
             </ul>
@@ -179,15 +176,36 @@
             </ul>
           </li> 
 
-          <li class="nav-item">
-            <a href="widgets.html" class="nav-link">
-              <i class="nav-icon fas fa-map-marked"></i>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-upload"></i>
               <p>
                 Track Suspect
+                <i class="right fas fa-angle-left"></i>
               </p>
-              <span class="Qn-num">3</span>
+              <span id="t_suspect_n" class="Qn-num" style="right: 32px"></span>
+
             </a>
-          </li>
+            <ul class="nav nav-treeview">
+              <li class="nav-item" style="padding-left: 10px">
+                <a href="/controller/recent_track_suspect" class="nav-link">
+                  <i class="nav-icon fas fa-angle-right"></i>
+                  <p>
+                    Recently Track
+                  </p>
+                  <span id="t_suspect_sub_n" class="Qn-num"></span>
+                </a>
+              </li>
+              <li class="nav-item" style="padding-left: 10px">
+                <a href="/controller/track_suspects" class="nav-link">
+                  <i class="nav-icon fas fa-angle-right"></i>
+                  <p>
+                    Tracking History
+                  </p>
+                </a>
+              </li>
+            </ul>
+          </li> 
 
           <li class="nav-item">
             <a href="/controller/suspect_list" class="nav-link">
@@ -230,20 +248,43 @@
               </li>
             </ul>
           </li> {% endcomment %}
+
+          <audio src="/media/backend_site/alarm_sound.mp3" id="alarm" loop="loop"></audio>
           
          
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
+      
     </div>
     <!-- /.sidebar -->
   </aside>
+
   
-
-
   <!-- ----------------------------------------------------- End Slider------------------------------------------------------------>
 
     {%block body%}{%endblock%}
+
+
+    <!-- Modal -->
+      <div class="modal fade" id="track_suspect_alert" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content" style="background-color: black">
+            
+            <div class="modal-body">
+              <div>
+                <i class="fa fa-exclamation-triangle" style="color: red; display: table; margin: 15% auto 5% auto;font-size: 10vw;" aria-hidden="true"></i>
+              </div>
+              
+              <div style="color: red; display: table; margin: 0% auto;">
+                <h3 style="font-size: 2.5vw">Suspect Catch in Camera!</h3>
+                <a href="/controller/recent_track_suspect" style="margin: 2% auto"><button class="btn btn-outline-danger" style="margin: 6% auto; display: block">Open Details</button></a>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
   
   <footer class="main-footer">
     <div class="float-right d-none d-sm-block">
@@ -260,7 +301,43 @@
   <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
+<script>
+  
+  let timer = 1000
 
+  const alert_generate = ()=> {
+    $('#track_suspect_alert').modal('show')
+    let audio = document.getElementById('alarm')
+    audio.play()
+    
+  }
+
+  const notification = ()=> {
+    $.ajax({
+        url: '/controller/get_notification/',
+        dataType: 'json',
+        success: function (data) {
+          if (data.track_status !== 0)
+            alert_generate()
+          if (data.r_c + data.a_c > 0)
+            document.getElementById('all_complain').innerHTML = data.r_c + data.a_c
+          if (data.r_c > 0)
+            document.getElementById('r_complain_n').innerHTML = data.r_c
+          if (data.a_c > 0)
+            document.getElementById('a_complain_n').innerHTML = data.a_c
+          if (data.t_s > 0) {
+            document.getElementById('t_suspect_n').innerHTML = data.t_s
+            document.getElementById('t_suspect_sub_n').innerHTML = data.t_s
+          }
+          timer = 5000
+        }
+    });
+  }
+
+  setInterval(()=>{ 
+    notification() 
+  }, timer);
+</script>
 <!-- jQuery -->
 <script src="{% static '/backend_site/plugins/jquery/jquery.min.js' %}"></script>
 <!-- Bootstrap -->
@@ -279,6 +356,7 @@
 
 
 {%block js%}{%endblock%}
+
 
 </body>
 </html>

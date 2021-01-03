@@ -1,0 +1,225 @@
+{% extends 'backend_site/base.html' %}
+
+{% block title %} RTCD {% endblock %}
+
+{% block user_image %}{{ data.image }}{% endblock %}
+{% block username %}{{ data.name }}{% endblock %}
+
+
+{%block css%}
+
+  <style>
+    .img_tag_date{
+      position: absolute;
+      bottom: 0px;
+      right: 20px;
+      color: red;
+    }
+  </style>
+
+{%endblock%}
+
+{% block body %}
+{% load static %}
+
+   <div class="content-wrapper">
+      <section class="content-header">
+         <div class="container-fluid">
+
+            <!-- `````````````````````````````````````````````````````````````````````````` -->
+                                       <!-- Heading Section -->
+             <!-- `````````````````````````````````````````````````````````````````````````` -->
+
+
+            <section class="content-header">
+                <div class="container-fluid">
+                  <div class="row mb-2">
+                    <div class="col-sm-6">
+                      <h1>{{title}}</h1>
+                    </div>
+                    <div class="col-sm-6">
+                      <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">{{sub_title}}</li>
+                      </ol>
+                    </div>
+                  </div>
+                </div><!-- /.container-fluid -->
+              </section>
+
+
+              <!-- `````````````````````````````````````````````````````````````````````````` -->
+                                       <!-- Tables section -->
+             <!-- `````````````````````````````````````````````````````````````````````````` -->
+
+             <section class="content-header">
+                <div class="container-fluid">
+                  <div class="row">
+                      <div class="col-12">
+
+
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title">Detail information</h3>
+                            </div>
+                            <!-- /.card-header -->
+                                <div class="row p-3">
+                                  <div class="col-sm-12">
+                                    <table id="example1" class="table table-bordered table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info">
+                                      <thead>
+                                        <tr role="row">
+                                          <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Suspect Id</th>
+                                          <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">Recent Track Date & Time</th>
+                                          <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Images</th>
+                                          <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">View Location</th>
+                                          <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">Status</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody> 
+                                        {% for val in suspect_data %}
+                                    
+                                          <tr role="row" class="odd">
+                                            <td tabindex="0" class="sorting_1">{{ val.suspect_id.id}}</td>
+                                            <td>{{ val.report_date_time }}</td>
+                                            <td>
+                                              <button class="btn btn-outline-dark img-btn" onclick="showImg('{{val.suspect_image}}', '{{val.report_date_time}}')">
+                                                Click here
+                                              </button>
+                                            </td>
+                                            <td>
+                                              <div class="btn btn-outline-danger img-btn" onclick="initMap('{{val.latitude}}', '{{val.longitude}}', '{{val.id}}')">
+                                                <i class="fa fa-map-marker" style="margin-right: 5px;" aria-hidden="true"></i>
+                                                  location
+                                              </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-pill badge-danger">Not Viewd</span>
+                                            </td>
+
+                                          </tr>
+                                        {% endfor %}
+                                      
+                                      </tbody>
+                                      <tfoot>
+                                      <tr><th rowspan="1" colspan="1">Suspect Id</th><th rowspan="1" colspan="1">Recent Track Date & Time</th><th rowspan="1" colspan="1">Images</th><th rowspan="1" colspan="1">View Location</th><th rowspan="1" colspan="1">Status</th></tr>
+                                      </tfoot>
+                                    </table>
+                            </div>
+                          </div>
+                         
+
+                      </div>
+                </div>
+             </section>
+
+              <!-- Model For showing images   -->
+              <div class="modal fade bd-example-modal-lg" id="showSlider" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content" id="image-md">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none;">
+                      <span aria-hidden="true" style="position: relative; left: 48%;">&times;</span>
+                    </button>
+                    <span class="previous round" style="position: relative; right: 7%; top: 38%" onclick="previous()">&#8249;</span>
+                    <span class="next round" style="position: relative; left: 100%; top: 20%" onclick="next()">&#8250;</span>
+                    <div class="img-div-sus">
+                      <img src="" id="suspect_img" alt="">
+                    </div>
+
+                    <div class="img_tag_date">
+                      <h5>Tracking DateTime: <span id="img_tracking_date">876876</span></h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modal for google map -->
+
+              <div class="modal fade" id="showProfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Suspect Location</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" id="viewProfileContant">
+                      <div id="map" style="width: 100%; height: 500px;">
+
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+        </div>     
+      </section>
+   </div>
+
+{% endblock %}
+
+{%block js%}
+<!-- map Api script -->
+<script>
+  const initMap = (lat, lng, id)=>{ 
+    $('#showProfile').modal('show')
+    let map = new google.maps.Map(
+      document.getElementById('map'), {zoom: 18, center: {lat: parseFloat(lat), lng: parseFloat(lng)}}
+    );
+    
+    new google.maps.Marker({
+        position: {lat: parseFloat(lat), lng: parseFloat(lng)},
+        map: map
+    })
+
+    $.ajax({
+      url: '/controller/change_suspect_status/',
+      data: {
+          'suspect_id': id
+      },
+      dataType: 'json',
+      success: function (data) {
+      }
+    });
+  }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh79CwRvigxteAQuwwkcwjiT0k7hMnE4I&callback=initMap" type="text/javascript"></script>
+{% comment %} <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCWB6-x6bTFn4gDs_wY-2-R_gUTbv8k4-k"></script> {% endcomment %}
+<!-- DataTables -->
+<script src="{% static '/backend_site/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static '/backend_site/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static '/backend_site/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static '/backend_site/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+
+<!-- page script -->
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true,
+      "autoWidth": false,
+    });
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+
+
+  let showImg = (img, date) => {
+    let modal = document.getElementById("suspect_img");
+    
+    modal.setAttribute("src",`${img}`);
+    document.getElementById('img_tracking_date').innerHTML = date
+    $('#showSlider').modal('show');
+    
+  }
+
+
+</script>
+{%endblock%}

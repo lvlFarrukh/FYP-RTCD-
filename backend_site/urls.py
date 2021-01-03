@@ -9,7 +9,7 @@ urlpatterns = [
         path('adding/', views.add_suspect_data, name='add_suspect_data'),
         path('user/', views.user, name='user'),
         path('suspect_list/', views.suspect_list, name='suspect_list'),
-        path('identify_suspects/', views.identify_suspects, name='identify_suspects'),
+        # path('identify_suspects/', views.identify_suspects, name='identify_suspects'),
         path('updating/', views.update_suspect, name='update_suspect'),
         path('deleting/<int:suspectId>/', views.del_suspect, name='del_suspect'),
         path('wanted_list/', views.wanted_suspect_list, name='wanted_suspect_list'),
@@ -20,6 +20,11 @@ urlpatterns = [
         path('extractFaces/', views.scan_video, name='scan_video'),
         path('deleteComplain/', views.delete_user_complain, name='delete_user_complain'),
         path('addSuspect/', views.add_suspect_from_video, name='add_suspect_from_video'),
+        path('track_suspects/', views.track_suspects, name='track_suspects'),
+        path('get_track_suspect_images/', views.get_track_suspect_images, name='get_track_suspect_images'),
+        path('get_track_location/', views.get_track_location, name='get_track_location'),
+        path('get_notification/', views.get_notification, name='get_notification'),
+        path('recent_track_suspect/', views.recent_track_suspect, name='recent_track_suspect'),
+        path('change_suspect_status/', views.change_suspect_status, name='change_suspect_status'),
         # path('faceRecognization/', views.face_check, name='face_check'),
-
 ]

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import *
-from backend_site.models import suspect_from_app_User, app_user, suspect_from_anonymous, caught_suspect
+from backend_site.models import suspect_from_app_User, app_user, suspect_from_anonymous, caught_suspect, suspect_track_list
 from .serializers import serializer_suspectData
 from django.http import HttpResponse, JsonResponse
 import sys
@@ -9,6 +9,8 @@ import base64
 import numpy as np
 import cv2
 import random
+import datetime
+from django.utils import timezone
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from django.views.decorators.csrf import csrf_exempt
@@ -83,27 +85,34 @@ def creat_app_user(request):
 @csrf_exempt       
 def suspect_track(request):
     if request.method == "POST":
-        try: 
-            shape = ast.literal_eval(request.POST.get('shape'))
-            buffer = base64.b64decode(request.POST.get('image'))
-            # Reconstruct the image
-            image = np.frombuffer(buffer, dtype=np.uint8).reshape(shape)
-            suspect_id = request.POST.get('suspect_id')
-            latitude = request.POST.get('latitude')
-            longitude = request.POST.get('longitude')
-            image_path = f"./media/caught_suspect/{suspect_id}-suspect{random.randint(0,10000000)}.jpg"
-            cv2.imwrite(image_path, image)
-            # print(type(image))
-            
+        # try: 
+        shape = ast.literal_eval(request.POST.get('shape'))
+        buffer = base64.b64decode(request.POST.get('image'))
+        # Reconstruct the image
+        image = np.frombuffer(buffer, dtype=np.uint8).reshape(shape)
+        suspect_id = request.POST.get('suspect_id')
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        image_path = f"./media/caught_suspect/{suspect_id}-suspect{random.randint(0,10000000)}.jpg"
+        cv2.imwrite(image_path, image)
+        suspect_instance = suspect_person_detail.objects.get(id=suspect_id)
 
-            suspect_instance = suspect_person_detail.objects.get(id=int(suspect_id))
-            upload_data = caught_suspect(suspect_id=suspect_instance, latitude=latitude,
-                                        longitude=longitude, suspect_image=image_path[1:])
-            upload_data.save()
+        if len(suspect_track_list.objects.filter(suspect_id=suspect_instance)) == 0:
+            tracked_suspect = suspect_track_list(suspect_id=suspect_instance)
+            tracked_suspect.save()
+        else:
+            tracked_suspect = suspect_track_list.objects.filter(suspect_id=suspect_instance)[0]
+            tracked_suspect.recent_track_date_time = timezone.now()
+            tracked_suspect.status = 0
+            tracked_suspect.save()
 
-            return JsonResponse({"response": "201 created"}, safe=True)
-        except:
-            return JsonResponse({"response": "403 Forbidden"}, safe=True)
+        upload_data = caught_suspect(suspect_id=tracked_suspect, latitude=latitude,
+                                    longitude=longitude, suspect_image=image_path[1:])
+        upload_data.save()
+
+        return JsonResponse({"response": "201 created"}, safe=True)
+        # except:
+        #     return JsonResponse({"response": "403 Forbidden"}, safe=True)
 
     else:
         return JsonResponse({"response": "405 Method Not Allowed"}, safe=True)

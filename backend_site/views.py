@@ -99,12 +99,7 @@ def index(request):
         # print(count1)
         data.name = data.name.split(" ")[0]
 
-        regist_sus = len(suspect_from_app_User.objects.all())
-        anon_sus = len(suspect_from_anonymous.objects.all())
-        all_sus = regist_sus + anon_sus
-
-        return render(request, 'backend_site/index.html', {'data': data, 'front_count':[count1],
-                                                            'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
+        return render(request, 'backend_site/index.html', {'data': data, 'front_count':[count1]})
     else:
         return redirect('login')
 
@@ -255,12 +250,7 @@ def user(request):
         data = controller_user.objects.get(id=request.session['login_id'])
         data.name = data.name.split(" ")[0]
 
-        regist_sus = len(suspect_from_app_User.objects.all())
-        anon_sus = len(suspect_from_anonymous.objects.all())
-        all_sus = regist_sus + anon_sus
-
-        return render(request, 'backend_site/user.html', {'data': data,
-                                                          'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
+        return render(request, 'backend_site/user.html', {'data': data})
     else:
         return redirect('login')
 
@@ -276,15 +266,10 @@ def suspect_list(request):
         for i in suspect_data:
             # images = [img for img in os.listdir(destination) if img.split('_')[0] =
             i.image = [img for img in os.listdir(destination) if img.split('-')[0] == str(i.id)]
-    
-        regist_sus = len(suspect_from_app_User.objects.all())
-        anon_sus = len(suspect_from_anonymous.objects.all())
-        all_sus = regist_sus + anon_sus
             
         return render(request, 'backend_site/suspects_list.html', {'suspect_data': suspect_data,
                                                                    'data': user_data, 'length':len(suspect_data),
-                                                                   'title': 'All Reports', 'sub_title':'Reports',
-                                                                   'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
+                                                                   'title': 'All Reports', 'sub_title':'Reports'})
     else:
         return redirect('login')
 
@@ -364,10 +349,10 @@ def suspect_found_list(request):
         return redirect('login')
 
 
-"""
+# """
 
-"""
-def identify_suspects(request):
+# """
+# def identify_suspects(request):
     if request.session.has_key('login_id'):
         data = controller_user.objects.get(id=request.session['login_id'])
         identify_suspect = suspect_person_detail.objects.get(status=True)
@@ -395,14 +380,10 @@ def appUser_registered(request):
             if suspect.status == 0:
                 all_suspect.append(suspect)
         
-        regist_sus = len(suspect_from_app_User.objects.all())
-        anon_sus = len(suspect_from_anonymous.objects.all())
-        all_sus = regist_sus + anon_sus
         try:
             return render(request, 'backend_site/suspects_from_user.html', {'all_suspect': all_suspect,
                                                                             'data': data, 'length':len(all_suspect),
-                                                                            'title': 'Suspect from Registered user', 'sub_title':'AppUser Suspect',
-                                                                            'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
+                                                                            'title': 'Suspect from Registered user', 'sub_title':'AppUser Suspect'})
         except:
             # print(identify_suspect.first_name)
             return render(request, 'backend_site/index.html', {'data': data, 'length': 0,
@@ -423,17 +404,10 @@ def appUser_anonymous(request):
             if suspect.status == 0:
                 all_suspect.append(suspect)
 
-        regist_sus = len(suspect_from_app_User.objects.all())
-        anon_sus = len(suspect_from_anonymous.objects.all())
-        all_sus = regist_sus + anon_sus
-
-        # print(regist_sus,'===',anon_sus,'===',all_sus)
-
         try:
             return render(request, 'backend_site/suspect_from_anonymous.html', {'all_suspect': all_suspect,
                                                                             'data': data, 'length':len(all_suspect),
-                                                                            'title': 'Suspect from Anonymous user', 'sub_title':'AppUser Suspect',
-                                                                            'r_sus': regist_sus, 'a_sus': anon_sus, 'all_sus': all_sus})
+                                                                            'title': 'Suspect from Anonymous user', 'sub_title':'AppUser Suspect'})
         except:
             # print(identify_suspect.first_name)
             return render(request, 'backend_site/index.html', {'data': data, 'length': 0,
@@ -542,3 +516,98 @@ def add_suspect_from_video(request):
     return JsonResponse({'msg': "Successfully saved!"})
 
 
+"""
+This function is to display suspect that are track
+"""
+def track_suspects(request):
+    if request.session.has_key('login_id'):
+        user_data = controller_user.objects.get(id=request.session['login_id'])
+        suspect_data = suspect_track_list.objects.all()
+
+        return render(request, 'backend_site/track_suspect_list.html', {'suspect_data': suspect_data,
+                                                                   'data': user_data, 'length':len(suspect_data),
+                                                                   'title': 'Tracked Suspect', 'sub_title':'Tracked Suspect'},)
+    else:
+        return redirect('login')
+
+
+"""
+Function for Ajax to get all images url for track suspect
+"""
+def get_track_suspect_images(request):
+    id = request.GET.get('id')
+
+    suspect_data = caught_suspect.objects.filter(suspect_id=suspect_track_list.objects.get(id=id))
+    urls = []
+    date_time = []
+    for items in suspect_data:
+        urls.append(items.suspect_image)
+        date_time.append(items.report_date_time)
+
+    return JsonResponse({'urls': urls, 'dataTime': date_time})
+
+
+"""
+Function for Ajax to get all latitude and longitude for track suspect
+"""
+def get_track_location(request):
+    id = request.GET.get('id')
+    suspect_id = request.GET.get('suspect_id')
+    update_status = suspect_track_list.objects.filter(suspect_id=int(suspect_id))[0]
+    update_status.status = 1
+    update_status.save()
+    # print(update_status)
+    suspect_data = caught_suspect.objects.filter(suspect_id=suspect_track_list.objects.get(id=id))
+    location = []
+    for items in suspect_data:
+        location.append({'lat': items.latitude, 'lng': items.longitude})
+    
+    return JsonResponse({'cords': location})
+
+
+"""
+get notification
+"""
+def get_notification(request):
+    register_complain = len(suspect_from_app_User.objects.all())
+    anonymous_complain = len(suspect_from_app_User.objects.all())
+    track_suspects = suspect_track_list.objects.all()
+    total_catch_suspect = len(caught_suspect.objects.filter(status = 1))
+    t_s = []
+    for suspect in track_suspects:
+        if suspect.status == 1:
+            t_s.append(suspect)
+
+    track_suspect = caught_suspect.objects.filter(status = 0)
+    catch_suspect = len(track_suspect)
+    for data in track_suspect:
+        data.status = 1
+        data.save()
+
+    return JsonResponse({'tc_s': total_catch_suspect, 'track_status': catch_suspect, 'r_c': register_complain, 'a_c': anonymous_complain, 't_s': len(t_s), 't_s_r': len(suspect_person_detail.objects.all())})
+
+
+"""
+list of suspect that track recently
+"""
+def recent_track_suspect(request):
+    if request.session.has_key('login_id'):
+        user_data = controller_user.objects.get(id=request.session['login_id'])
+        track_suspect = caught_suspect.objects.filter(status = 1)
+
+        return render(request, 'backend_site/recent_track_suspect.html', {'suspect_data': track_suspect,
+                                                                       'data': user_data, 'length':len(track_suspect),
+                                                                       'title': 'Tracked Suspect', 'sub_title':'Tracked Suspect'},)
+    else:
+        return redirect('login')
+
+
+"""
+change suspect status to 2
+"""
+def change_suspect_status(request):
+    update_status = caught_suspect.objects.get(id=int(request.GET.get('suspect_id')))  
+    update_status.status = 2
+    update_status.save()
+
+    return JsonResponse({'res': 'Done!'})

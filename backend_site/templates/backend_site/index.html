@@ -6,10 +6,6 @@
 {% block user_image %}{{ data.image }}{% endblock %}
 {% block username %}{{ data.name }}{% endblock %}
 
-{% block user_complain %}{{ all_sus }}{% endblock %}
-{% block c_register %}{{ r_sus }}{% endblock %}
-{% block c_anonymous %}{{ a_sus }}{% endblock %}
-{% block track_suspect %}{% endblock %}
 
 {% block body %}
 
@@ -24,12 +20,12 @@
             <div class="row">
                <div class="col-12 col-sm-6 col-md-3">
                  <div class="info-box">
-                   <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-user-secret"></i></span>
+                   <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-camera"></i></span>
      
                    <div class="info-box-content">
-                     <span class="info-box-text">Total Suspect Report</span>
-                     <span class="info-box-number">
-                       {{front_count.0}}
+                     <span class="info-box-text">Caught Suspect</span>
+                     <span id="t_t_s" class="info-box-number">
+                       
                      </span>
                    </div>
                    <!-- /.info-box-content -->
@@ -39,11 +35,11 @@
                <!-- /.col -->
                <div class="col-12 col-sm-6 col-md-3">
                  <div class="info-box mb-3">
-                   <span class="info-box-icon bg-success elevation-1"><i class="fas fa-search"></i></span>
+                   <span class="info-box-icon bg-success elevation-1"><i class="fas fa-user-secret"></i></span>
      
                    <div class="info-box-content">
-                     <span class="info-box-text">Suspect Found</span>
-                     <span class="info-box-number">coming soon</span>
+                     <span class="info-box-text">Total Suspect Report</span>
+                     <span class="info-box-number">{{front_count.0}}</span>
                    </div>
                    <!-- /.info-box-content -->
                  </div>
@@ -59,8 +55,8 @@
                    <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-user"></i></span>
      
                    <div class="info-box-content">
-                     <span class="info-box-text">Total Users</span>
-                     <span class="info-box-number">coming soon</span>
+                     <span class="info-box-text">Register User Complain</span>
+                     <span id="r_c_n_m" class="info-box-number"></span>
                    </div>
                    <!-- /.info-box-content -->
                  </div>
@@ -72,8 +68,8 @@
                    <span class="info-box-icon bg-info elevation-1"><i class="fas fa-users"></i></span>
      
                    <div class="info-box-content">
-                     <span class="info-box-text">New Members</span>
-                     <span class="info-box-number">coming soon</span>
+                     <span class="info-box-text">Anonyemous Complains</span>
+                     <span id="a_c_n_m" class="info-box-number"></span>
                    </div>
                    <!-- /.info-box-content -->
                  </div>
@@ -85,24 +81,97 @@
              
           </div>
 
-             
+          {% comment %} ------------------------------------------------------------------------------------------------ {% endcomment %}
+                                                        {% comment %} Main Graphs {% endcomment %}
+          {% comment %} ------------------------------------------------------------------------------------------------ {% endcomment %}
+
+          <section class="content-header">
+                <div class="container-fluid">
+                  <div class="row">
+                      <div class="col-12">
+
+
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title">Graph</h3>
+                            </div>
+                            <!-- /.card-header -->
+                                <div class="row p-3">
+                                  <div class="col-sm-12">
+                                    <div class="col-12" style="text-align: center;">
+                                      <img src="/media/backend_site/loader.gif" style="width: 50px" id="loader" alt="">
+                                    </div>
+                                    <canvas id="myChart" width="400" height="150"></canvas>
+                                  </div>
+                                </div>
+                        </div>
+                      </div>
+                  </div>
+          </section>
+
       </section>
    </div>
 
 {% endblock %}
 
 {%block js%}
-<!-- <script>
+<script>
 
-      const faceRecog = ()=>{
-        $.ajax({
-          // method: 'POST',
-          url: '/controller/faceRecognization/',
-          success: function (data) {
-              alert(data);
-          }
-      });
-      }
+  const showChart = data=> {
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Caught Suspect', 'Total Suspect Report', 'Register App Complains', 'Anonyemous Complains'],
+            datasets: [{
+                label: 'Monitoring Suspects',
+                data: [data.tc_s, data.t_s_r, data.r_c, data.a_c],
+                backgroundColor: [
+                    'rgba(222, 85, 68, 0.6)',
+                    'rgba(86,168,72, 0.6)',
+                    'rgba(1,122,252, 0.6)',
+                    'rgba(71,164,185, 0.6)',
+                ],
+                borderColor: [
+                    'rgba(222, 85, 68, 1)',
+                    'rgba(86,168,72, 1)',
+                    'rgba(1,122,252, 1)',
+                    'rgba(71,164,185, 1)',
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+  }
 
-</script> -->
+  let chartLimit = 0
+
+  const notification_index_page = ()=> {
+    $.ajax({
+        url: '/controller/get_notification/',
+        dataType: 'json',
+        success: function (data) {
+          document.getElementById('t_t_s').innerHTML = data.tc_s
+          document.getElementById('r_c_n_m').innerHTML = data.r_c
+          document.getElementById('a_c_n_m').innerHTML = data.a_c
+          document.getElementById('loader').style.display = "none"
+          chartLimit === 0 && showChart(data)
+          chartLimit = 1
+        }
+    });
+  }
+
+  setInterval(()=>{ 
+    notification_index_page() 
+  }, timer);
+</script>
 {%endblock%}

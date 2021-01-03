@@ -1,5 +1,6 @@
 from django.db import models
 import datetime
+from django.utils import timezone
 
 
 def upload_location(instance, filename):
@@ -98,11 +99,25 @@ class suspect_from_anonymous(models.Model):
 
 
 """
-for suspect that are catch or track by camera
+List of suspect that track by caught by camera
+"""
+class suspect_track_list(models.Model):
+    id = models.AutoField(primary_key=True)
+    suspect_id = models.ForeignKey(suspect_person_detail, on_delete=models.CASCADE)
+    report_date_time = models.DateTimeField(default=timezone.now())
+    recent_track_date_time = models.DateTimeField(default=timezone.now())
+    status = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"id: {self.id}, Recent Report Data & Time: {self.recent_track_date_time}"
+
+
+"""
+suspects caught by camera
 """
 class caught_suspect(models.Model):
     id = models.AutoField(primary_key=True)
-    suspect_id = models.ForeignKey(suspect_person_detail, on_delete=models.CASCADE)
+    suspect_id = models.ForeignKey(suspect_track_list, on_delete=models.CASCADE)
     latitude = models.CharField(max_length=100)
     longitude = models.CharField(max_length=100)
     report_date_time = models.DateTimeField(default=datetime.datetime.now())
@@ -111,6 +126,5 @@ class caught_suspect(models.Model):
 
     def __str__(self):
         return f"id: {self.id}, Report Data & Time: {self.report_date_time}"
-
 
 

@@ -15,8 +15,8 @@
 	<!-- GOOGLE FONTS -->
 	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
 	<!-- ICONS -->
-	<link href="{% static 'backend_site/img/apple-icon.png' %}" rel="apple-touch-icon" sizes="76x76">
-	<link href="{% static 'backend_site/img/favicon.png' %}" rel="icon" type="image/png" sizes="96x96">
+	{% comment %} <link href="{% static 'backend_site/img/apple-icon.png' %}" rel="apple-touch-icon" sizes="76x76"> {% endcomment %}
+	<link href="/media/backend_site/logo-c.png" rel="icon" type="image/png" sizes="96x96">
 </head>
 
 <body>
@@ -28,7 +28,7 @@
 					<div class="left">
 						<div class="content">
 							<div class="header">
-								<div class="logo text-center"><img alt="Klorofil Logo" src="/media/backend_site/img/logo-dark.png"></div>
+								{% comment %} <div class="logo text-center"><img alt="Klorofil Logo" src="/media/backend_site/img/logo-dark.png"></div> {% endcomment %}
 								<p class="lead">Login to your account</p>
 							</div>
 							<form class="form-auth-small" method="post" action="/controller/login/">  {% csrf_token %}	
@@ -54,11 +54,10 @@
 						</div>
 					</div>
 					<div class="right">
-						<div class="overlay"></div>
-						<div class="content text">
-							<h1 class="heading">Free Bootstrap dashboard template</h1>
-							<p>by The Develovers</p>
+						<div class="overlay" style="background-color: #9fe5ff; text-align: center;">
+							<img src="/media/backend_site/logo-lg-s.png" width="80%" alt="logo">
 						</div>
+						
 					</div>
 					<div class="clearfix"></div>
 				</div>
