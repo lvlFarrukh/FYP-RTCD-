@@ -53,13 +53,13 @@ status: 0 = active user, 1 = unactive user
 """
 class app_user(models.Model):
     id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=100, default="unknown")
-    last_name = models.CharField(max_length=100, default="unknown")
+    full_name = models.CharField(max_length=100, default="unknown")
+    # last_name = models.CharField(max_length=100, default="unknown")
     email = models.EmailField(unique=True, max_length=200, default="unknown")
     password = models.CharField(max_length=50, default='not set')
     gender = models.CharField(max_length=100, default="unknown")
     cnic = models.BigIntegerField(default=0, unique=True)
-    address = models.CharField(max_length=300, default="unknown")
+    city = models.CharField(max_length=300, default="unknown")
     date_of_birth = models.DateField(default="2050-01-01")
     phone_number = models.BigIntegerField(default=0)
     registration_date = models.DateTimeField(default=datetime.datetime.now())

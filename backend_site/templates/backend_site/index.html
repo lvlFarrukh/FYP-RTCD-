@@ -160,6 +160,7 @@
         url: '/controller/get_notification/',
         dataType: 'json',
         success: function (data) {
+          console.log(data)
           document.getElementById('t_t_s').innerHTML = data.tc_s
           document.getElementById('r_c_n_m').innerHTML = data.r_c
           document.getElementById('a_c_n_m').innerHTML = data.a_c

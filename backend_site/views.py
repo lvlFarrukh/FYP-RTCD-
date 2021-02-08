@@ -13,6 +13,9 @@ import io
 # import pickle
 import shutil
 
+# import keras.backend.tensorflow_backend as tb
+# tb._SYMBOLIC_SCOPE.value = True
+
 # Library for face recognation
 import matplotlib.pyplot as plt 
 from PIL import Image
@@ -24,7 +27,7 @@ from keras_vggface.vggface import VGGFace
 from keras_vggface.utils import preprocess_input
 import cv2
 
-from .firebase_setting import firebase_obj
+from .firebase_setting import ref
 
 # Set paths for transfer Images 
 Base_dir = os.path.join(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0],'media')
@@ -55,8 +58,8 @@ def extract_face_edges(frame, suspect_id, required_size=(224, 224)):
     # Here firebase data insertion is perform
     face_array_list = np.ndarray.tolist(face_edges)
     face_edges_json = json.dumps(face_array_list)
-    firebase_obj.post('/suspect images', {'id': suspect_id, 'face': face_edges_json})
-
+    ref.push({'id': suspect_id, 'face': face_edges_json})
+    # firebase_obj.post('/suspect images', {'id': suspect_id, 'face': face_edges_json})
 
 """
 This function detect face and extract face eadges for face detection
@@ -83,7 +86,10 @@ def recognize_face(frame, suspect_id, required_size=(224, 224)):
         # Here firebase data insertion is perform
         face_array_list = np.ndarray.tolist(face_edges)
         face_edges_json = json.dumps(face_array_list)
-        firebase_obj.post('/suspect images', {'id': suspect_id, 'face': face_edges_json})
+        ref.push({
+            'id': suspect_id, 
+            'face': face_edges_json
+        })
         yhat.append(face_edges)
 
     return yhat
@@ -129,7 +135,6 @@ def login(request):
 def logout(request):
     del request.session['login_id']
     return redirect('login')
-
 
 
 """
@@ -349,10 +354,10 @@ def suspect_found_list(request):
         return redirect('login')
 
 
-# """
+"""
 
-# """
-# def identify_suspects(request):
+"""
+def identify_suspects(request):
     if request.session.has_key('login_id'):
         data = controller_user.objects.get(id=request.session['login_id'])
         identify_suspect = suspect_person_detail.objects.get(status=True)
@@ -570,7 +575,7 @@ get notification
 """
 def get_notification(request):
     register_complain = len(suspect_from_app_User.objects.all())
-    anonymous_complain = len(suspect_from_app_User.objects.all())
+    anonymous_complain = len(suspect_from_anonymous.objects.all())
     track_suspects = suspect_track_list.objects.all()
     total_catch_suspect = len(caught_suspect.objects.filter(status = 1))
     t_s = []

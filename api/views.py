@@ -67,19 +67,19 @@ def uploadSuspect_anonymous(request):
         return JsonResponse({"response": "405 Method Not Allowed"}, safe=True)
 
 
-@csrf_exempt
-def creat_app_user(request):
-    if request.method == "POST":
-        # try: 
-        # stream = io.BytesIO(request.body)
-        # python_data = JSONParser().parse(stream)
-        print(request.POST)
-        return JsonResponse({"response": "201 created"}, safe=True)
-        # except:
-        #     return JsonResponse({"response": "403 Forbidden"}, safe=True)
+# @csrf_exempt
+# def creat_app_user(request):
+#     if request.method == "POST":
+#         # try: 
+#         # stream = io.BytesIO(request.body)
+#         # python_data = JSONParser().parse(stream)
+#         print(request.POST)
+#         return JsonResponse({"response": "201 created"}, safe=True)
+#         # except:
+#         #     return JsonResponse({"response": "403 Forbidden"}, safe=True)
 
-    else:
-        return JsonResponse({"response": "405 Method Not Allowed"}, safe=True)
+#     else:
+#         return JsonResponse({"response": "405 Method Not Allowed"}, safe=True)
 
 
 @csrf_exempt       
@@ -117,3 +117,62 @@ def suspect_track(request):
     else:
         return JsonResponse({"response": "405 Method Not Allowed"}, safe=True)
 
+
+
+@csrf_exempt 
+def check_username_email(request):
+    if request.method == "POST":
+        try: 
+            login_status = 2
+            cnic = request.POST['cnic']
+            email = request.POST['email']
+            username = request.POST['username']
+
+            # print(cnic, email, username)
+            check_cnic = len(app_user.objects.filter(cnic=cnic))
+            check_email = len(app_user.objects.filter(email=email))
+            check_username = len(app_user.objects.filter(full_name=username))
+
+            if check_cnic == 0 and check_email == 0 and check_username == 0:
+                login_status = 0
+            else: 
+                login_status = 1
+
+            print(login_status)
+
+
+            return JsonResponse({"status": login_status, "credStatus": [check_username, check_cnic, check_email]}, safe=True)
+        except:
+            return JsonResponse({"response": "403 Forbidden"}, safe=True)
+
+    else:
+        return JsonResponse({"response": "405 Method Not Allowed"}, safe=True)
+
+
+@csrf_exempt 
+def creat_app_user(request):
+    if request.method == "POST":
+        try: 
+            cnic = request.POST['cnic']
+            email = request.POST['email']
+            number = request.POST['number']
+            password = request.POST['password']
+            full_name = request.POST['full_name']
+            gender = request.POST['gender']
+            DOB = request.POST['DOB']
+            city = request.POST['city']
+            # print(cnic,' ',email,' ',number,' ',password,' ',full_name,' ',' ',gender,' ',city,' ',DOB)
+            
+            new_user = app_user(full_name=full_name, 
+                                email=email, password=password, 
+                                gender=gender, cnic=cnic,
+                                city=city, date_of_birth=DOB,
+                                phone_number=number)
+            
+            new_user.save()
+            return JsonResponse({"resp": 0}, safe=True)
+        except:
+            return JsonResponse({"resp": 1}, safe=True)
+
+    else:
+        return JsonResponse({"response": "405 Method Not Allowed"}, safe=True)

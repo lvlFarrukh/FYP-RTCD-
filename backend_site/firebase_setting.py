@@ -1,4 +1,32 @@
-from firebase import firebase
+# from firebase import firebase
 
-firebase_obj = firebase.FirebaseApplication('https://realtime-criminal-detection-default-rtdb.firebaseio.com/', None)
+# firebase_obj = firebase.FirebaseApplication('https://realtime-criminal-detection-default-rtdb.firebaseio.com/', None)
+
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
+
+creds = {
+  "type": "service_account",
+  "project_id": "realtime-criminal-detection",
+  "private_key_id": "23c2e701dba226007bf47d87e80790663e00de09",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCtN2wUR9VP7l56\nY0JARdwH5du94rnYphshWlj+USZi6vbJ/DJfr9Pwkg9lrUBLWS6lzJdG8xBU1uoe\nug03cEqBWzSMUTj8pS53HJm9luemRAY3cl3zmeu3CUV7MVs4h+ycRBHleA3DfuvU\n+JNGdTavQOunjsvW1nmznW16VyvLnpygq1V9groE0IVyyDHiMsd+uL0BIHecgK9O\nZLKtdUADn8MkPlWGWvtqSoUDZHPwlhp3rbMaFMbCAqwk1IdVmsptsRmJg8Ic3Gkw\n+kL5nidBimhfRUMqWRcs7tGRzoUEwaw5ck/00jt+f8DQgf8nfadVqgID+tX/JFdz\nsV7bMUyZAgMBAAECggEAKVf5pYuRuA7aoRaw+PtTrdTo0pVbq4DWJ+tTI3yGD4Uq\nm4JlGZ6zlQ+fujKUjod+UVeYYfhhFQbpAaWBwxI7zk1RKQ637eGVShva/DwZFX/W\nBgT3tM2vy9PcMC/TKJaU3KWIqf8yNc/FBWPBb0dJ4qG5vZghQimWCc+REmrdCq/v\njq0SkBZIHlUC6BLRmEOe1/Y3PRTjg4GPdlQEYm90kCMdrQmHwCMvWVL7QpqEx4fv\nW1CZordrYdLo5me2UUv6N+h3iDi8Up/+lTEpR3oq0boU6iQ7PcvMIhihDNcXKq2o\nSWur/L7PDk4N1KmirNWdktFZWGBc1XKf0gvEp+C1uwKBgQDn+8opW7OR6PJiHHtu\nl4IukN/tA/+XbP+FX3qXGRR6JroDxW2opqrl+4Z+gxdst9nTDlxPYqKFYmMcavdp\nTcmT6mzzo0e89N4IwBOlXw1gNr0BkErOnPacZzibOfkjbYX5iZKFI+jNS8i1l9+t\nEfsyN01XoDG5Y+A8NMiKdXpeKwKBgQC/JiRGojeANipMyjsHJHjzzFIk7g/OBXnu\nQfZg5a1W97OU5iGdfMAOjP7y2DiMaa6CUt+Emz06nmOYDQ6JuYTgAXV3i2q+T7+1\njDHdjvzZ/tDtE7Y2XL7KkrQwUBcbCskwHtNwC5PymDJdeLbjAr3ZmttdriGlhln1\nWSaAGoIiSwKBgCVpVMPwtvfb8mLiJwHBy0vJL2Og1nJMMLUIndOKRuQgJLWA/FtL\nbZojQyBZ8cglqipAUaC3zm/mWwd1NKs10UFad/Germ4Jq1kL6N8tghG3IioDZB0H\n8Tlt6BIYelY9TnLcvdVc4ilhhF/Mu1TE5pbFlmKAQiSct8fd102E/pP7AoGBAKXM\nIpj1qWhXExeqLcsDMrpc1j9cEm9jxqAHrPndHh4aGjUj67Jbe4bje1wOefYo0IoP\n8fpmYJSQv9gqMxr4xK079rSrQ/ow2BtTsAj6No2rfXK1r0214nN5Djv9rBzznRBV\nHJbKJBi/NKhoxVFglmXB8VZvbJXTVAIAwulIlOnDAoGBANmpLDOQTZj5r2e59YgE\n1pLXbAd0ABGPFXQoHtW9HWrkpQnw8bjeMoO+xMY69rCQtNe7MEJ9JT24+po7mUz2\nS9MRc3uf1LpfcYBtxED1NMnfYYng2ZlSJqxv347Cgx9MeuKAMWjkJyoOvCPxE9Cb\nShZNtOPHkIqbkCDlKCaa3sUI\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-4m2su@realtime-criminal-detection.iam.gserviceaccount.com",
+  "client_id": "112866572704283786925",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-4m2su%40realtime-criminal-detection.iam.gserviceaccount.com"
+}
+
+try:
+    app = firebase_admin.get_app()
+except ValueError as e:
+    cred = credentials.Certificate(creds)
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://realtime-criminal-detection-default-rtdb.firebaseio.com/'
+    })
+
+ref = db.reference('suspect images')
+
 

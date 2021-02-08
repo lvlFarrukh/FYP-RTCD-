@@ -9,4 +9,6 @@ urlpatterns = [
         path('upload_anonymously/', views.uploadSuspect_anonymous, name='uploadSuspect_anonymous' ),
         path('creat_user/', views.creat_app_user, name='creat_app_user'),
         path('suspect_track/', views.suspect_track, name='suspect_track'),
+        path('auth_user_email/', views.check_username_email, name='check_username_email'),
+        path('creat_app_user/', views.creat_app_user, name='creat_app_user'),
 ]
